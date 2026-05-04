@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
-    <title>Neul 늘 - v1.6.0 (Automated)</title>
+    <title>Neul 늘 - v1.6.1 (Automated)</title>
     <link rel="manifest" href="./manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Noto+Serif:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -124,9 +124,19 @@
                 <div><h4 class="font-bold text-primary font-sans" data-i18n="themeSettings">테마 설정</h4><p id="current-theme-label" class="text-xs text-tertiary mt-1" data-i18n="themeAuto">자동</p></div>
                 <span class="material-symbols-outlined text-tertiary">chevron_right</span>
             </div>
-            <div onclick="openModal('modal-bell')" class="bg-glass-bg backdrop-blur-md rounded-[1.5rem] p-5 shadow-sm border border-glass-border mb-6 cursor-pointer hover:bg-glass-bg-hover active:scale-95 transition-all flex justify-between items-center">
+            <div onclick="openModal('modal-bell')" class="bg-glass-bg backdrop-blur-md rounded-[1.5rem] p-5 shadow-sm border border-glass-border mb-3 cursor-pointer hover:bg-glass-bg-hover active:scale-95 transition-all flex justify-between items-center">
                 <div><h4 class="font-bold text-primary font-sans" data-i18n="bellSettings">명상 종소리</h4><p id="current-bell-label" class="text-xs text-tertiary mt-1">사원의 종소리</p></div>
                 <span class="material-symbols-outlined text-tertiary">chevron_right</span>
+            </div>
+            <div class="bg-glass-bg backdrop-blur-md rounded-[1.5rem] p-5 shadow-sm border border-glass-border mb-6 flex justify-between items-center transition-all">
+                <div>
+                    <h4 class="font-bold text-primary font-sans" data-i18n="dndMode">방해 금지 모드</h4>
+                    <p class="text-xs text-tertiary mt-1" data-i18n="dndDesc">명상 중 알림 음소거 (예정)</p>
+                </div>
+                <div class="relative inline-block w-12 h-6 cursor-pointer" onclick="toggleDND()">
+                    <input type="checkbox" id="dnd-toggle" class="peer sr-only">
+                    <div class="w-11 h-6 bg-outline-variant/50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                </div>
             </div>
 
             <h3 class="text-lg font-serif text-tertiary font-bold mb-4 transition-colors" data-i18n="settingsSubTitle">구독 및 계정</h3>
@@ -146,7 +156,7 @@
             </button>
 
             <div class="flex flex-col items-center justify-center pt-2 pb-6 opacity-40 select-none transition-colors">
-                <p id="app-version-display" class="text-xs font-sans text-tertiary font-bold tracking-widest uppercase">Neul 늘 v1.6.0</p>
+                <p id="app-version-display" class="text-xs font-sans text-tertiary font-bold tracking-widest uppercase">Neul 늘 v1.6.1</p>
             </div>
         </div>
 
@@ -251,8 +261,6 @@
     <script>
         // ==========================================
         // 0. DualAudioPlayer 클래스 (Seamless Crossfade Loop 구현)
-        // 로컬 오프라인/HTML 단일 구동 시 Web Audio API의 CORS를 완벽 우회하며 
-        // 앱의 배경음악(Ambient, ASMR)을 1ms의 끊김도 없이 부드럽게 무한 연결해 줍니다.
         // ==========================================
         class DualAudioPlayer {
             constructor() {
@@ -265,22 +273,20 @@
 
                 this.targetVolume = 1.0;
                 this.isMuted = false;
-                this.fadeDuration = 2.5; // 크로스페이드 시간(초)
+                this.fadeDuration = 2.5; 
                 this.src = "";
                 this.isPlaying = false;
                 this.isCrossfading = false;
                 this.crossfadeInterval = null;
 
-                // 재생 시간이 끝나가면 다른 인스턴스로 부드럽게 넘김
                 const onTimeUpdate = (e) => {
                     const audio = e.target;
                     if (!this.isPlaying || this.isCrossfading) return;
                     
                     if (audio === this.active && audio.duration > 0) {
                         let currentFade = this.fadeDuration;
-                        if(audio.duration < 5) currentFade = audio.duration * 0.2; // 비정상적으로 짧은 오디오에 대한 방어 로직
+                        if(audio.duration < 5) currentFade = audio.duration * 0.2; 
 
-                        // 트랙 종료 임박 시 크로스페이드 발동
                         if (audio.duration - audio.currentTime <= currentFade) {
                             this.doCrossfade(currentFade);
                         }
@@ -290,7 +296,6 @@
                 this.audioA.addEventListener('timeupdate', onTimeUpdate);
                 this.audioB.addEventListener('timeupdate', onTimeUpdate);
 
-                // timeupdate가 이벤트를 놓쳤을 때를 대비한 엣지케이스 방어(안전장치)
                 this.audioA.addEventListener('ended', () => this.fallbackSwap(this.audioB, this.audioA));
                 this.audioB.addEventListener('ended', () => this.fallbackSwap(this.audioA, this.audioB));
             }
@@ -358,7 +363,6 @@
                 }
             }
 
-            // 모바일 브라우저 Auto-play 정책 우회용 (최초 1회 실행)
             unlock() {
                 if(this.src) {
                     this.audioA.play().catch(()=>{}); this.audioA.pause(); this.audioA.currentTime = 0;
@@ -377,7 +381,7 @@
                 fadingIn.volume = 0;
                 fadingIn.play().catch(()=>{});
 
-                const steps = 25; // 부드러운 전환을 위한 스텝 세분화 (ex. 2.5초간 25번)
+                const steps = 25; 
                 const stepTime = (fadeTime * 1000) / steps;
                 const volStep = this.targetVolume / steps;
 
@@ -413,13 +417,13 @@
                 mixerTitle: "사운드 믹서", bellStartEnd: "시작/종료 종소리", bellInterval: "중간 환기 종소리",
                 libraryTitle: "사운드 라이브러리", freePresets: "무료 프리셋", premiumPresets: "프리미엄 프리셋", seeAll: "모두 보기",
                 journeyTitle: "나의 여정", totalTimeLabel: "총 수련 시간", minuteUnit: "분", streakLabel: "연속 달성일", dayUnit: "일",
-                settingsMeditationTitle: "명상 설정", languageSettings: "언어 (Language)", bellSettings: "명상 종소리",
+                settingsMeditationTitle: "명상 설정", languageSettings: "언어 (Language)", bellSettings: "명상 종소리", dndMode: "방해 금지 모드", dndDesc: "명상 중 알림 음소거 (예정)",
                 themeSettings: "테마 설정 (Theme)", themeModalTitle: "테마 설정", themeLight: "라이트 모드", themeDark: "다크 모드", themeAuto: "자동",
                 settingsSubTitle: "구독 및 계정", subPlan: "구독 플랜", subStatusFree: "무료 베이직 플랜", upgrade: "업그레이드", restorePurchase: "구매 복원",
                 navHome: "홈", navLibrary: "라이브러리", navJourney: "여정", customTimeTitle: "명상 시간 설정", confirm: "확인", cancelBtn: "취소", alertTitle: "알림",
                 languageSettingsTitle: "언어 설정", bellModalTitle: "종소리 라이브러리", 
                 bellNone: "종소리 없음 (None)", bellTibetan: "사원의 종소리", bellCrystal: "크리스탈 볼", bellGong: "깊은 징",
-                paywallDesc: "모든 프리미엄 사운드와 커스텀 기능을<br>잠금 해제하고 더 깊은 휴식을 경험하세요.",
+                paywallDesc: "모든 프리미엄 사운드와 커스텀 기능을<br>잠금 해제하고 더 깊은 휴식을 경험하세요.", stopMeditationFirst: "명상을 먼저 종료해 주세요.",
                 payYearly: "연간 구독", payYearlyPrice: "월 $4.99 / 연 $59.99", payTrial: "7일 무료", payMonthly: "월간 구독", payMonthlyPrice: "$9.99 / 월", payStart: "무료 체험 시작하기",
                 paywallDemoAlert: "결제 시스템 데모입니다.", finishMsg: "수고하셨습니다. 명상 세션이 완료되었습니다.", restoreMsgLoading: "구매 내역을 확인 중입니다...", restoreMsgSuccess: "구매 복원이 완료되었습니다.", breatheIn: "숨을 들이마십니다", breatheOut: "천천히 내뱉습니다",
                 resetData: "여정 데이터 초기화", resetConfirmMsg: "모든 명상 기록과 통계가 삭제됩니다. 정말 초기화하시겠습니까?", resetDoneMsg: "모든 여정 데이터가 초기화되었습니다.", analysisTitle: "여정 분석", mostUsedSound: "가장 자주 머문 무드", favoriteTime: "가장 선호하는 시간대", timeMorning: "아침 (5AM - 12PM)", timeAfternoon: "오후 (12PM - 6PM)", timeEvening: "저녁 (6PM - 10PM)", timeNight: "밤 (10PM - 5AM)", notEnoughData: "데이터 부족"
@@ -430,12 +434,12 @@
                 mixerTitle: "Sound Mixer", bellStartEnd: "Start/End Bell", bellInterval: "Interval Bell",
                 libraryTitle: "Sound Library", freePresets: "Free Presets", premiumPresets: "Premium Presets", seeAll: "See All",
                 journeyTitle: "Your Journey", totalTimeLabel: "Total Time", minuteUnit: "Min", streakLabel: "Current Streak", dayUnit: "Days",
-                settingsMeditationTitle: "Meditation Settings", languageSettings: "Language", bellSettings: "Meditation Bell",
+                settingsMeditationTitle: "Meditation Settings", languageSettings: "Language", bellSettings: "Meditation Bell", dndMode: "Do Not Disturb", dndDesc: "Mute notifications (Upcoming)",
                 themeSettings: "App Theme", themeModalTitle: "Select Theme", themeLight: "Light Mode", themeDark: "Dark Mode", themeAuto: "Auto",
                 settingsSubTitle: "Subscription & Account", subPlan: "Your Plan", subStatusFree: "Free Basic Plan", upgrade: "Upgrade", restorePurchase: "Restore Purchase",
                 navHome: "Home", navLibrary: "Library", navJourney: "Journey", customTimeTitle: "Set Custom Time", confirm: "Confirm", cancelBtn: "Cancel", alertTitle: "Notice",
                 languageSettingsTitle: "Select Language", bellModalTitle: "Bell Library", bellNone: "None", bellTibetan: "Tibetan Bowl", bellCrystal: "Crystal Bowl", bellGong: "Deep Gong",
-                paywallDesc: "Unlock all premium sounds and custom features<br>to experience deeper relaxation.", payYearly: "Yearly", payYearlyPrice: "$4.99 / mo (Billed $59.99/yr)", payTrial: "7 Days Free", payMonthly: "Monthly", payMonthlyPrice: "$9.99 / mo", payStart: "Start Free Trial",
+                paywallDesc: "Unlock all premium sounds and custom features<br>to experience deeper relaxation.", stopMeditationFirst: "Please stop meditation first.", payYearly: "Yearly", payYearlyPrice: "$4.99 / mo (Billed $59.99/yr)", payTrial: "7 Days Free", payMonthly: "Monthly", payMonthlyPrice: "$9.99 / mo", payStart: "Start Free Trial",
                 paywallDemoAlert: "Payment gateway demo.", finishMsg: "Great job. Your meditation session is complete.", restoreMsgLoading: "Checking store purchases...", restoreMsgSuccess: "Purchase successfully restored.", breatheIn: "Breathe in", breatheOut: "Breathe out slowly",
                 resetData: "Reset Journey Data", resetConfirmMsg: "All meditation history will be deleted. Are you sure?", resetDoneMsg: "Journey data has been reset.", analysisTitle: "Journey Analysis", mostUsedSound: "Most Visited Mood", favoriteTime: "Favorite Time of Day", timeMorning: "Morning", timeAfternoon: "Afternoon", timeEvening: "Evening", timeNight: "Night", notEnoughData: "Not enough data"
             },
@@ -443,27 +447,27 @@
                 greetingMorning: "Buenos días", greetingAfternoon: "Buenas tardes", greetingEvening: "Buenas tardes", greetingNight: "Buenas noches",
                 currentMood: "(ESTADO ACTUAL)", min5: "5 min", min10: "10 min", min15: "15 min", customTime: "Personal.", startMeditation: "Empezar Meditación",
                 mixerTitle: "Mezclador", bellStartEnd: "Campana Inicio/Fin", bellInterval: "Campana de Intervalo", libraryTitle: "Biblioteca de Sonidos", freePresets: "Gratis", premiumPresets: "Premium", seeAll: "Ver todo",
-                journeyTitle: "Tu Viaje", totalTimeLabel: "Tiempo Total", minuteUnit: "min", streakLabel: "Racha Actual", dayUnit: "días", settingsMeditationTitle: "Ajustes de Meditación", languageSettings: "Idioma", bellSettings: "Campana", themeSettings: "Tema", themeModalTitle: "Seleccionar Tema", themeLight: "Modo Claro", themeDark: "Modo Oscuro", themeAuto: "Automático",
+                journeyTitle: "Tu Viaje", totalTimeLabel: "Tiempo Total", minuteUnit: "min", streakLabel: "Racha Actual", dayUnit: "días", settingsMeditationTitle: "Ajustes de Meditación", languageSettings: "Idioma", bellSettings: "Campana", dndMode: "No Molestar", dndDesc: "Silenciar notificaciones (Próximamente)", themeSettings: "Tema", themeModalTitle: "Seleccionar Tema", themeLight: "Modo Claro", themeDark: "Modo Oscuro", themeAuto: "Automático",
                 settingsSubTitle: "Suscripción y Cuenta", subPlan: "Tu Plan", subStatusFree: "Plan Básico", upgrade: "Mejorar", restorePurchase: "Restaurar Compra",
                 navHome: "Inicio", navLibrary: "Biblioteca", navJourney: "Viaje", customTimeTitle: "Tiempo", confirm: "Confirmar", cancelBtn: "Cancelar", alertTitle: "Aviso",
                 languageSettingsTitle: "Seleccionar Idioma", bellModalTitle: "Campanas", bellNone: "Ninguna", bellTibetan: "Cuenco Tibetano", bellCrystal: "Cuenco de Cristal", bellGong: "Gong Profundo",
-                paywallDesc: "Desbloquea todos los sonidos premium y funciones<br>para experimentar una relajación más profunda.", payYearly: "Anual", payYearlyPrice: "$4.99/mes ($59.99/año)", payTrial: "7 Días Gratis", payMonthly: "Mensual", payMonthlyPrice: "$9.99 / mes", payStart: "Empezar Prueba",
+                paywallDesc: "Desbloquea todos los sonidos premium y funciones<br>para experimentar una relajación más profunda.", stopMeditationFirst: "Por favor, detén la meditación primero.", payYearly: "Anual", payYearlyPrice: "$4.99/mes ($59.99/año)", payTrial: "7 Días Gratis", payMonthly: "Mensual", payMonthlyPrice: "$9.99 / mes", payStart: "Empezar Prueba",
                 paywallDemoAlert: "Demostración de pago.", finishMsg: "Excelente trabajo. Tu sesión ha terminado.", restoreMsgLoading: "Buscando...", restoreMsgSuccess: "Compra restaurada.", breatheIn: "Inhala", breatheOut: "Exhala", resetData: "Reiniciar Datos", resetConfirmMsg: "Todo el historial será eliminado. ¿Estás seguro?", resetDoneMsg: "Los datos han sido reiniciados.", analysisTitle: "Análisis del Viaje", mostUsedSound: "Sonido Favorito", favoriteTime: "Momento Favorito", timeMorning: "Mañana", timeAfternoon: "Tarde", timeEvening: "Tarde/Noche", timeNight: "Noche", notEnoughData: "Sin datos"
             },
             zh: {
                 greetingMorning: "早上好", greetingAfternoon: "下午好", greetingEvening: "晚上好", greetingNight: "晚安",
                 currentMood: "(当前情绪)", min5: "5分钟", min10: "10分钟", min15: "15分钟", customTime: "自定义", startMeditation: "开始冥想", mixerTitle: "声音混音器", bellStartEnd: "开始/结束铃声", bellInterval: "间隔铃声", libraryTitle: "声音库", freePresets: "免费预设", premiumPresets: "高级预设", seeAll: "查看全部",
-                journeyTitle: "您的旅程", totalTimeLabel: "总时长", minuteUnit: "分钟", streakLabel: "连续打卡", dayUnit: "天", settingsMeditationTitle: "冥想设置", languageSettings: "语言", bellSettings: "冥想铃声", themeSettings: "主题", themeModalTitle: "选择主题", themeLight: "浅色模式", themeDark: "深色模式", themeAuto: "自动",
+                journeyTitle: "您的旅程", totalTimeLabel: "总时长", minuteUnit: "分钟", streakLabel: "连续打卡", dayUnit: "天", settingsMeditationTitle: "冥想设置", languageSettings: "语言", bellSettings: "冥想铃声", dndMode: "勿扰模式", dndDesc: "冥想时静音通知 (即将推出)", themeSettings: "主题", themeModalTitle: "选择主题", themeLight: "浅色模式", themeDark: "深色模式", themeAuto: "自动",
                 settingsSubTitle: "订阅与账户", subPlan: "您的计划", subStatusFree: "免费基础计划", upgrade: "升级", restorePurchase: "恢复购买", navHome: "首页", navLibrary: "音频库", navJourney: "旅程", customTimeTitle: "自定义时间", confirm: "确认", cancelBtn: "取消", alertTitle: "提示",
-                languageSettingsTitle: "选择语言", bellModalTitle: "铃声库", bellNone: "无", bellTibetan: "西藏颂钵", bellCrystal: "水晶钵", bellGong: "深沉铜锣", paywallDesc: "解锁所有高级声音和自定义功能，<br>体验更深层次的放松。", payYearly: "年度订阅", payYearlyPrice: "每月 $4.99 / 每年 $59.99", payTrial: "免费试用", payMonthly: "月度订阅", payMonthlyPrice: "$9.99 / 月", payStart: "开始免费试用",
+                languageSettingsTitle: "选择语言", bellModalTitle: "铃声库", bellNone: "无", bellTibetan: "西藏颂钵", bellCrystal: "水晶钵", bellGong: "深沉铜锣", paywallDesc: "解锁所有高级声音和自定义功能，<br>体验更深层次的放松。", stopMeditationFirst: "请先停止冥想。", payYearly: "年度订阅", payYearlyPrice: "每月 $4.99 / 每年 $59.99", payTrial: "免费试用", payMonthly: "月度订阅", payMonthlyPrice: "$9.99 / 月", payStart: "开始免费试用",
                 paywallDemoAlert: "支付系统演示。", finishMsg: "辛苦了。您的冥想环节已完成。", restoreMsgLoading: "正在检查...", restoreMsgSuccess: "恢复成功。", breatheIn: "吸气", breatheOut: "呼气", resetData: "重置数据", resetConfirmMsg: "所有历史记录将被删除。确定吗？", resetDoneMsg: "数据已重置。", analysisTitle: "旅程分析", mostUsedSound: "最常用的声音", favoriteTime: "首选时间", timeMorning: "早晨", timeAfternoon: "下午", timeEvening: "傍晚", timeNight: "夜晚", notEnoughData: "数据不足"
             },
             ja: {
                 greetingMorning: "おはようございます", greetingAfternoon: "こんにちは", greetingEvening: "こんばんは", greetingNight: "おやすみなさい",
                 currentMood: "(現在のムード)", min5: "5分", min10: "10分", min15: "15分", customTime: "設定", startMeditation: "瞑想を始める", mixerTitle: "ミキサー", bellStartEnd: "開始/終了の鐘", bellInterval: "インターバルの鐘", libraryTitle: "ライブラリ", freePresets: "無料プリセット", premiumPresets: "プレミアム", seeAll: "すべて",
-                journeyTitle: "記録", totalTimeLabel: "合計時間", minuteUnit: "分", streakLabel: "連続記録", dayUnit: "日", settingsMeditationTitle: "設定", languageSettings: "言語", bellSettings: "鐘", themeSettings: "テーマ", themeModalTitle: "テーマ", themeLight: "ライト", themeDark: "ダーク", themeAuto: "自動",
+                journeyTitle: "記録", totalTimeLabel: "合計時間", minuteUnit: "分", streakLabel: "連続記録", dayUnit: "日", settingsMeditationTitle: "設定", languageSettings: "言語", bellSettings: "鐘", dndMode: "おやすみモード", dndDesc: "瞑想中の通知をミュート (予定)", themeSettings: "テーマ", themeModalTitle: "テーマ", themeLight: "ライト", themeDark: "ダーク", themeAuto: "自動",
                 settingsSubTitle: "アカウント", subPlan: "プラン", subStatusFree: "無料プラン", upgrade: "アップグレード", restorePurchase: "購入の復元", navHome: "ホーム", navLibrary: "ライブラリ", navJourney: "記録", customTimeTitle: "時間", confirm: "確認", cancelBtn: "キャンセル", alertTitle: "お知らせ",
-                languageSettingsTitle: "言語", bellModalTitle: "鐘", bellNone: "なし", bellTibetan: "チベットボウル", bellCrystal: "クリスタルボウル", bellGong: "ゴング", paywallDesc: "すべての機能をロック解除して、<br>より深いリラクゼーションを。", payYearly: "年間", payYearlyPrice: "月額 $4.99 / 年額 $59.99", payTrial: "7日間無料", payMonthly: "月間", payMonthlyPrice: "$9.99 / 月", payStart: "無料トライアル",
+                languageSettingsTitle: "言語", bellModalTitle: "鐘", bellNone: "なし", bellTibetan: "チベットボウル", bellCrystal: "クリスタルボウル", bellGong: "ゴング", paywallDesc: "すべての機能をロック解除して、<br>より深いリラクゼーションを。", stopMeditationFirst: "先に瞑想を終了してください。", payYearly: "年間", payYearlyPrice: "月額 $4.99 / 年額 $59.99", payTrial: "7日間無料", payMonthly: "月間", payMonthlyPrice: "$9.99 / 月", payStart: "無料トライアル",
                 paywallDemoAlert: "デモです。", finishMsg: "お疲れ様でした。", restoreMsgLoading: "確認中...", restoreMsgSuccess: "復元しました。", breatheIn: "息を吸って", breatheOut: "息を吐いて", resetData: "データ初期化", resetConfirmMsg: "全ての記録が削除されます。よろしいですか？", resetDoneMsg: "初期化されました。", analysisTitle: "記録分析", mostUsedSound: "よく聴くサウンド", favoriteTime: "よく瞑想する時間帯", timeMorning: "朝", timeAfternoon: "昼", timeEvening: "夕方", timeNight: "夜", notEnoughData: "データなし"
             }
         };
@@ -485,7 +489,8 @@
         let userData = {
             lang: null, theme: 'auto', bell: 'tibetan', presetIndex: 0,
             totalTime: 0, streak: 0, lastDate: null, history: [],
-            volAsmr: 0.7, volAmbient: 0.3, volBowl: 0.5, volAnchor: 0.3
+            volAsmr: 0.7, volAmbient: 0.3, volBowl: 0.5, volAnchor: 0.3,
+            dndMode: false
         };
 
         let currentLang = 'en'; 
@@ -501,34 +506,27 @@
         let activeModals = [];
         let confirmAction = null;
 
-        // 크로스페이드를 지원하는 오디오 객체
         let audioAsmr, audioAmbient;
         
-        // 크로스페이드가 불필요한 기존 오디오
         const audioBowl = document.getElementById('audio-bowl');
         const audioAnchor = document.getElementById('audio-anchor');
         const previewAudio = new Audio(); 
 
-        // 🚨 [자동화 스크립트 마커] START: BELLS
         const bells = {
             tibetan: './assets/audio/bell/tibetan.mp3',
             crystal: './assets/audio/bell/crystal.mp3',
             gong: './assets/audio/bell/gong.mp3'
         };
-        // 🚨 [자동화 스크립트 마커] END: BELLS
 
-        // 🚨 [자동화 스크립트 마커] START: PRESETS
         let appPresets = [
             { type: 'free', title: 'Deep Forest Rain', img: 'https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&q=60&w=400', asmr: './assets/audio/free/forest-rain-asmr.mp3', ambient: './assets/audio/free/forest-rain-ambient.mp3' },
             { type: 'free', title: 'Cozy Campfire', img: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=60&w=400', asmr: './assets/audio/free/campfire-asmr.mp3', ambient: './assets/audio/free/campfire-ambient.mp3' },
             { type: 'free', title: 'Ocean Waves', img: 'https://images.unsplash.com/photo-1439405326854-014607f694d7?auto=format&fit=crop&q=60&w=400', asmr: './assets/audio/free/ocean-asmr.mp3', ambient: './assets/audio/free/ocean-ambient.mp3' }, 
-        { type: 'free', title: 'Mountain Wind', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=60&w=400', asmr: './assets/audio/free/mountain-asmr.mp3', ambient: './assets/audio/free/mountain-ambient.mp3' },
+            { type: 'free', title: 'Mountain Wind', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=60&w=400', asmr: './assets/audio/free/mountain-asmr.mp3', ambient: './assets/audio/free/mountain-ambient.mp3' },
             { type: 'premium', title: 'Celestial Dreams', img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&q=60&w=400', asmr: './assets/audio/premium/premium1-asmr.mp3', ambient: './assets/audio/premium/premium1-ambient.mp3' }
         ];
-        // 🚨 [자동화 스크립트 마커] END: PRESETS
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 크로스페이드 플레이어 초기화
             audioAsmr = new DualAudioPlayer();
             audioAmbient = new DualAudioPlayer();
 
@@ -536,6 +534,8 @@
             initLanguageSystem(); initThemeSystem(); initMixer();
             renderLists(); updateJourneyUI(); 
             
+            document.getElementById('dnd-toggle').checked = userData.dndMode;
+
             changeMood(userData.presetIndex, false);
             changeBell(userData.bell, false);
 
@@ -554,8 +554,14 @@
 
         function saveUserData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(userData)); }
 
-        // History API 기반 라우팅
+        // History API 기반 라우팅 및 뒤로가기 방어 로직
         window.addEventListener('popstate', (e) => {
+            if (isMeditating) {
+                // 뒤로가기를 눌러도 명상 플레이어에서 나가지 못하도록 히스토리를 강제 유지
+                history.pushState({ modalId: 'meditation' }, "", "#_meditating");
+                showAlert(getI18nStr('stopMeditationFirst'));
+                return;
+            }
             if(activeModals.length > 0) {
                 const modalId = activeModals.pop();
                 hideModalDOM(modalId);
@@ -662,7 +668,7 @@
 
         function setLanguage(langCode) {
             currentLang = langCode; userData.lang = langCode; saveUserData();
-            applyTranslations(); updateDynamicText();
+            applyTranslations(); updateDynamicText(); updateJourneyUI(); 
             document.getElementById('current-language-label').innerText = langNames[langCode];
             updateActiveState('.lang-btn', 'lang-' + langCode);
             changeBell(currentBell, false); setTheme(currentThemeSetting); closeModal('modal-language');
@@ -693,6 +699,12 @@
             const labelKey = mode === 'auto' ? 'themeAuto' : (mode === 'dark' ? 'themeDark' : 'themeLight');
             document.getElementById('current-theme-label').innerText = getI18nStr(labelKey);
             updateActiveState('.theme-btn', 'theme-' + mode);
+        }
+
+        function toggleDND() {
+            userData.dndMode = !userData.dndMode;
+            saveUserData();
+            document.getElementById('dnd-toggle').checked = userData.dndMode;
         }
 
         function renderLists() {
@@ -806,7 +818,6 @@
         function toggleMute() {
             isMuted = !isMuted;
             
-            // DualAudioPlayer와 일반 Audio 객체 모두 음소거 동기화
             audioAsmr.setMuted(isMuted);
             audioAmbient.setMuted(isMuted);
             audioBowl.muted = isMuted;
@@ -820,7 +831,13 @@
             
             audioAsmr.unlock();
             audioAmbient.unlock();
-            [audioBowl, audioAnchor].forEach(audio => { if(audio.src) { audio.play().catch(()=>{}); audio.pause(); audio.currentTime = 0; } });
+            
+            // anchor만 unlock 처리하여 직접 실행되는 bowl 플레이와 충돌 방지
+            audioAnchor.muted = true;
+            audioAnchor.play().then(() => { 
+                audioAnchor.pause(); 
+                audioAnchor.muted = false; 
+            }).catch(()=>{});
             
             audioUnlocked = true;
         }
@@ -829,6 +846,8 @@
             if(isMeditating || isProcessingAction) return; 
             isProcessingAction = true;
             
+            history.pushState({ modalId: 'meditation' }, "", "#_meditating");
+
             unlockAudio(); isMeditating = true;
             ['home', 'player', 'journey'].forEach(t => { const el = document.getElementById(`tab-${t}`); el.classList.remove('z-10', 'opacity-100', 'pointer-events-auto'); el.classList.add('z-0', 'opacity-0', 'pointer-events-none'); });
             document.getElementById('bottom-nav').classList.add('translate-y-full');
@@ -839,10 +858,26 @@
             audioAsmr.play(); 
             audioAmbient.play();
 
-            if(currentBell !== 'none' && bells[currentBell]) { audioBowl.volume = userData.volBowl; audioBowl.play().catch(()=>{}); }
+            if(currentBell !== 'none' && bells[currentBell]) { 
+                audioBowl.volume = userData.volBowl; 
+                audioBowl.currentTime = 0; 
+                audioBowl.play().catch(()=>{}); 
+            }
             
             startBreathing();
-            meditationTimer = setInterval(() => { seconds--; updateTimerDisplay(); if(seconds <= 0) stopMeditation(true); }, 1000);
+            meditationTimer = setInterval(() => { 
+                seconds--; 
+                updateTimerDisplay(); 
+
+                // 명상 종료 5초 전 음악 볼륨 페이드아웃 (Fade out at the end)
+                if (seconds <= 5 && seconds > 0) {
+                    const ratio = seconds / 5;
+                    audioAsmr.setVolume(userData.volAsmr * ratio);
+                    audioAmbient.setVolume(userData.volAmbient * ratio);
+                }
+
+                if(seconds <= 0) stopMeditation(true); 
+            }, 1000);
             scheduleRandomChime();
             
             setTimeout(() => { isProcessingAction = false; }, 500);
@@ -852,12 +887,25 @@
             if(!isMeditating || isProcessingAction) return;
             isProcessingAction = true;
             
-            isMeditating = false; clearInterval(meditationTimer); clearInterval(breathInterval); clearTimeout(randomChimeTimer);
+            isMeditating = false; 
+            clearInterval(meditationTimer); clearInterval(breathInterval); clearTimeout(randomChimeTimer);
             
+            if(history.state && history.state.modalId === 'meditation') {
+                history.back(); // 명상 종료 시 히스토리 스택 원상복구
+            }
+
             audioAsmr.stop(); 
             audioAmbient.stop();
+            
+            // 다음 세션을 위해 페이드아웃된 오디오 볼륨 원상 복귀
+            audioAsmr.setVolume(userData.volAsmr);
+            audioAmbient.setVolume(userData.volAmbient);
 
-            if(currentBell !== 'none' && bells[currentBell]) { audioBowl.volume = userData.volBowl; audioBowl.currentTime = 0; audioBowl.play().catch(()=>{}); }
+            if(currentBell !== 'none' && bells[currentBell]) { 
+                audioBowl.volume = userData.volBowl; 
+                audioBowl.currentTime = 0; 
+                audioBowl.play().catch(()=>{}); 
+            }
             
             const medView = document.getElementById('view-meditation');
             medView.classList.remove('z-50', 'opacity-100', 'pointer-events-auto'); medView.classList.add('z-0', 'opacity-0', 'pointer-events-none');
