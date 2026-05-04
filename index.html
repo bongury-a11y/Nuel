@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
-    <title>Neul 늘 - v1.6.6</title>
+    <title>Neul 늘 - v1.6.7</title>
     <link rel="manifest" href="./manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Noto+Serif:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -156,7 +156,7 @@
             </button>
 
             <div class="flex flex-col items-center justify-center pt-2 pb-6 opacity-40 select-none transition-colors">
-                <p id="app-version-display" class="text-xs font-sans text-tertiary font-bold tracking-widest uppercase">Neul 늘 v1.6.6</p>
+                <p id="app-version-display" class="text-xs font-sans text-tertiary font-bold tracking-widest uppercase">Neul 늘 v1.6.7</p>
             </div>
         </div>
 
@@ -637,8 +637,7 @@
         let confirmAction = null;
         
         // 뒤로가기 관련 (앱 무단 종료 방지)
-        let lastBackPressTime = 0;
-        let programmaticBackCount = 0;
+        // v1.6.7: replaceState 방식으로 변경되어 lastBackPressTime, programmaticBackCount 불필요
 
         let audioAsmr, audioAmbient;
         
@@ -705,60 +704,63 @@
         }
 
         // ==========================================
-        // History API 라우팅 (v1.6.5: buffer guard 방식)
+        // History API 라우팅 (v1.6.7: replaceState 방식)
         // ==========================================
-        // 핵심: 어떤 상황에서 popstate가 호출되든, 처리 직후 즉시(동기적으로) pushState로
-        // 새 guard를 쌓아 스택을 절대 비우지 않는다. 이렇게 하면 모바일 OS가 빠른 연속
-        // 뒤로가기를 보내도 스택이 항상 1개 이상 남아 있어 앱이 실수로 종료되지 않는다.
-        window.addEventListener('popstate', (e) => {
-            // 우리가 의도적으로 history.back()을 호출한 경우는 무시 (모달 닫기 등에서 사용)
-            if (programmaticBackCount > 0) {
-                programmaticBackCount--;
-                return;
-            }
-
-            // 1. 모달이 열려있으면 최우선적으로 닫는다
+        // 설계:
+        //   - 모달 닫기(버튼/백드롭): replaceState로 guard 덮어씀 → popstate 발생 안 함
+        //   - 모달 닫기(뒤로가기): popstate 발생 → 아래 핸들러에서 처리
+        //   - 명상 뒤로가기: 완전 차단, guard 재push
+        //   - 홈 뒤로가기: guard 재push (앱 종료 방지)
+        window.addEventListener('popstate', function(e) {
+            // 1. 모달이 열려있으면 뒤로가기로 닫힌 것 → DOM 닫고 guard 보충
             if(activeModals.length > 0) {
                 const modalId = activeModals.pop();
                 hideModalDOM(modalId);
-                // 모달이 닫혔으니 그 자리에 새 guard를 즉시 쌓는다 (홈 또는 명상 위에)
-                const restoreState = isMeditating ? { page: 'meditation_guard' } : { page: 'home_guard' };
-                history.pushState(restoreState, "", "");
-                return; 
+                const guardState = isMeditating
+                    ? { page: 'meditation_guard' }
+                    : { page: 'home_guard' };
+                history.pushState(guardState, "", "");
+                return;
             }
-            
-            // 2. 명상 중 뒤로가기 → 횟수·시간 무관하게 완전 차단, 토스트만 표시
-            //    정지는 화면의 버튼(stop_circle)으로만 가능
+
+            // 2. 명상 중 뒤로가기 → 완전 차단, guard 재push, 토스트
             if (isMeditating) {
                 history.pushState({ page: 'meditation_guard' }, "", "");
                 showToast(getI18nStr('meditationBackBlocked'));
                 return;
             }
 
-            // 3. 홈 화면에서의 뒤로가기 → home_guard가 소비됨 → 즉시 새 guard를 쌓아 앱 종료 방지
-            //    (사용자가 정말 앱을 끄려면 OS의 홈 버튼을 사용)
-            //    이렇게 두면 명상 종료 후 추가 뒤로가기를 눌러도 스택이 비지 않는다.
+            // 3. 홈 화면에서 뒤로가기 → guard 재push (앱 종료 방지)
             history.pushState({ page: 'home_guard' }, "", "");
         });
 
         // ==========================================
-        // 모달 오픈/클로즈 (v1.6.4 - 백드롭 클릭 정확화)
+        // 모달 오픈/클로즈 (v1.6.7)
         // ==========================================
+        // 핵심 설계 변경:
+        // - 모달 열기: pushState({modalId}) — 뒤로가기로 닫을 수 있는 entry 추가
+        // - 모달 닫기(버튼): history.back() 를 절대 호출하지 않음.
+        //   대신 현재 history entry를 replaceState로 guard로 덮어씀.
+        //   → 브라우저가 "뒤로 가는" 동작을 수행하지 않으므로 화면 밀림/깜박임 없음.
+        // - 모달 닫기(뒤로가기): popstate에서 처리. 이미 pop이 된 상태이므로 pushState로 guard 보충.
+
         function openModal(modalId) {
             if (activeModals.includes(modalId)) return;
             const modal = document.getElementById(modalId);
             if (!modal) return;
             modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); modal.classList.add('modal-active'); }, 10);
-            
+            setTimeout(function() {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('modal-active');
+            }, 10);
             activeModals.push(modalId);
+            // 이 모달 entry를 history에 추가 (뒤로가기로 닫을 수 있도록)
             history.pushState({ modalId: modalId }, "", "");
-            if(modalId === 'modal-analysis') updateAnalysisUI(); 
+            if(modalId === 'modal-analysis') updateAnalysisUI();
         }
 
-        // 백드롭(=overlay 자기 자신) 클릭만 닫기로 처리
+        // 백드롭(overlay 자체) 클릭만 닫기
         function onOverlayClick(event, modalId) {
-            // event.target이 overlay 자체일 때만 닫기 (내부 컨텐츠 클릭은 무시)
             if (event && event.target.id === modalId) {
                 closeModal(modalId);
             }
@@ -768,16 +770,17 @@
             const index = activeModals.indexOf(modalId);
             if(index > -1) {
                 activeModals.splice(index, 1);
-                hideModalDOM(modalId);
-                // 닫기 버튼으로 닫은 경우 history도 동기화 (popstate가 발생하지만 흡수되도록 카운트)
-                if (history.state && history.state.modalId === modalId) {
-                    programmaticBackCount++;
-                    history.back();
-                }
-            } else {
-                // 안전망: 활성 스택에 없어도 DOM은 닫는다
-                hideModalDOM(modalId);
             }
+            hideModalDOM(modalId);
+
+            // history.back() 을 호출하지 않고 현재 entry를 guard로 덮어씀.
+            // 이렇게 하면 브라우저가 "뒤로 이동" 애니메이션을 실행하지 않아
+            // 화면 밀림/깜박임이 발생하지 않는다.
+            // 스택에서 modal entry가 남아있지만 다음 popstate에서 guard로 흡수됨.
+            const guardState = isMeditating
+                ? { page: 'meditation_guard' }
+                : { page: 'home_guard' };
+            history.replaceState(guardState, "", "");
         }
 
         function hideModalDOM(modalId) {
@@ -785,7 +788,7 @@
             if(modal) {
                 modal.classList.remove('modal-active');
                 modal.classList.add('opacity-0');
-                setTimeout(() => { modal.classList.add('hidden'); }, 400);
+                setTimeout(function() { modal.classList.add('hidden'); }, 400);
             }
         }
 
@@ -1060,7 +1063,6 @@
 
                 unlockAudio(); 
                 isMeditating = true;
-                lastBackPressTime = 0; // 토스트 카운터 초기화
 
                 ['home', 'player', 'journey'].forEach(t => { 
                     const el = document.getElementById(`tab-${t}`); 
@@ -1109,7 +1111,7 @@
             }
         }
 
-        function stopMeditation(completed = false, fromPopState = false) {
+        function stopMeditation(completed = false) {
             if(!isMeditating || isProcessingAction) return;
             isProcessingAction = true;
             
@@ -1119,15 +1121,9 @@
                 clearInterval(breathInterval); 
                 clearTimeout(randomChimeTimer);
                 
-                // 사용자가 화면의 정지 버튼을 눌러 종료한 경우에만 history.back() 호출
-                // popstate에서 호출된 경우는 이미 브라우저가 pop을 처리한 상태이므로 push만 한다
-                if(!fromPopState) {
-                    // 현재 state가 meditation 또는 meditation_guard면 한 단계 뒤로 가서 home_guard로 복귀
-                    if (history.state && (history.state.page === 'meditation' || history.state.page === 'meditation_guard')) {
-                        programmaticBackCount++;
-                        history.back(); 
-                    }
-                }
+                // v1.6.7: history.back() 대신 replaceState로 home_guard 상태로 덮어씀
+                // → 브라우저 뒤로가기 애니메이션 없음, 화면 밀림 없음
+                history.replaceState({ page: 'home_guard' }, "", "");
 
                 // 음원 페이드아웃 후 정지 (자연스러움 향상)
                 // 단, 자동 완료(completed=true)일 때는 이미 8초간 페이드 중이었으므로 즉시 stop
