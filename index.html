@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
-    <title>Neul 늘 - v1.6.1 (Automated)</title>
+    <title>Neul 늘 - v1.6.7</title>
     <link rel="manifest" href="./manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Noto+Serif:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -156,7 +156,7 @@
             </button>
 
             <div class="flex flex-col items-center justify-center pt-2 pb-6 opacity-40 select-none transition-colors">
-                <p id="app-version-display" class="text-xs font-sans text-tertiary font-bold tracking-widest uppercase">Neul 늘 v1.6.1</p>
+                <p id="app-version-display" class="text-xs font-sans text-tertiary font-bold tracking-widest uppercase">Neul 늘 v1.6.7</p>
             </div>
         </div>
 
@@ -184,19 +184,24 @@
             <button onclick="switchTab('journey')" id="nav-journey" class="nav-btn flex flex-col items-center gap-1 text-tertiary opacity-50 w-16 transition-transform active:scale-95"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">psychology</span><span class="text-[10px] font-sans font-bold" data-i18n="navJourney">Journey</span></button>
         </nav>
 
-        <div id="modal-mixer" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="closeModal('modal-mixer', event)">
+        <div id="toast-container" class="fixed bottom-32 left-1/2 transform -translate-x-1/2 z-[999] transition-opacity duration-300 opacity-0 pointer-events-none">
+            <div class="bg-black/80 backdrop-blur-md text-white text-sm font-sans px-6 py-3 rounded-full shadow-lg whitespace-nowrap text-center">
+            </div>
+        </div>
+
+        <div id="modal-mixer" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="onOverlayClick(event, 'modal-mixer')">
             <div class="modal-content bg-surface w-full max-h-[85vh] rounded-t-[2.5rem] p-6 pb-12 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)] transition-colors"><div class="flex justify-between items-center mb-6 shrink-0 px-2"><h2 class="text-2xl font-serif text-primary font-bold" data-i18n="mixerTitle">사운드 믹서</h2><button onclick="closeModal('modal-mixer')" class="text-tertiary bg-outline-variant/20 rounded-full p-1"><span class="material-symbols-outlined">close</span></button></div><div class="overflow-y-auto no-scrollbar pb-6 px-2 flex flex-col gap-6"><div><div class="flex justify-between items-center mb-3"><span class="font-sans text-sm font-bold text-primary flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">nature</span>ASMR</span><span id="label-asmr-vol" class="text-xs text-tertiary font-bold">70%</span></div><input type="range" id="slider-asmr" min="0" max="100" value="70"></div><div><div class="flex justify-between items-center mb-3"><span class="font-sans text-sm font-bold text-primary flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">music_note</span>Ambient</span><span id="label-ambient-vol" class="text-xs text-tertiary font-bold">30%</span></div><input type="range" id="slider-ambient" min="0" max="100" value="30"></div><div class="w-full h-[1px] bg-outline-variant/30 my-1"></div><div><div class="flex justify-between items-center mb-3"><span class="font-sans text-sm font-bold text-primary flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">notifications</span><span data-i18n="bellStartEnd">시작/종료 종소리</span></span><span id="label-bowl-vol" class="text-xs text-tertiary font-bold">50%</span></div><input type="range" id="slider-bowl" min="0" max="100" value="50"></div><div><div class="flex justify-between items-center mb-3"><span class="font-sans text-sm font-bold text-primary flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">notifications_active</span><span data-i18n="bellInterval">중간 환기 종소리</span></span><span id="label-anchor-vol" class="text-xs text-tertiary font-bold">30%</span></div><input type="range" id="slider-anchor" min="0" max="100" value="30"></div></div></div>
         </div>
 
-        <div id="modal-custom-time" class="modal-overlay hidden fixed inset-0 z-[250] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="closeModal('modal-custom-time', event)">
+        <div id="modal-custom-time" class="modal-overlay hidden fixed inset-0 z-[250] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="onOverlayClick(event, 'modal-custom-time')">
             <div class="modal-content bg-surface w-full rounded-t-[2.5rem] p-6 pb-10 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-serif text-primary font-bold" data-i18n="customTimeTitle">명상 시간 설정</h2><button onclick="closeModal('modal-custom-time')" class="text-tertiary bg-outline-variant/20 rounded-full p-1"><span class="material-symbols-outlined">close</span></button></div><div class="flex flex-col items-center gap-4 px-4 pb-4"><div class="flex items-end gap-2 mb-4"><input type="number" id="input-custom-time" value="20" min="1" max="120" class="w-24 text-center text-4xl font-serif font-bold bg-transparent border-b-2 border-primary text-primary outline-none"><span class="text-lg font-sans text-tertiary mb-1 font-bold" data-i18n="minuteUnit">분</span></div><button onclick="applyCustomTime()" class="w-full bg-primary text-on-primary py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition-transform" data-i18n="confirm">확인</button></div></div>
         </div>
 
-        <div id="modal-alert" class="modal-overlay hidden fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="closeModal('modal-alert', event)">
+        <div id="modal-alert" class="modal-overlay hidden fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="onOverlayClick(event, 'modal-alert')">
             <div class="modal-content bg-surface w-full rounded-t-[2.5rem] p-6 pb-10 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-serif text-primary font-bold" id="alert-title" data-i18n="alertTitle">알림</h2><button onclick="closeModal('modal-alert')" class="text-tertiary bg-outline-variant/20 rounded-full p-1"><span class="material-symbols-outlined text-sm">close</span></button></div><p class="text-sm font-sans text-tertiary/90 leading-relaxed mb-8 px-2" id="alert-message"></p><button onclick="closeModal('modal-alert')" class="w-full bg-primary text-on-primary py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition-transform" data-i18n="confirm">확인</button></div>
         </div>
 
-        <div id="modal-confirm" class="modal-overlay hidden fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="closeModal('modal-confirm', event)">
+        <div id="modal-confirm" class="modal-overlay hidden fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="onOverlayClick(event, 'modal-confirm')">
             <div class="modal-content bg-surface w-full rounded-t-[2.5rem] p-6 pb-10 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
                 <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-serif text-primary font-bold" data-i18n="alertTitle">알림</h2><button onclick="closeModal('modal-confirm')" class="text-tertiary bg-outline-variant/20 rounded-full p-1"><span class="material-symbols-outlined text-sm">close</span></button></div>
                 <p class="text-sm font-sans text-tertiary/90 leading-relaxed mb-8 px-2" id="confirm-message"></p>
@@ -207,27 +212,27 @@
             </div>
         </div>
 
-        <div id="modal-language" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="closeModal('modal-language', event)">
+        <div id="modal-language" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="onOverlayClick(event, 'modal-language')">
             <div class="modal-content bg-surface w-full max-h-[85vh] rounded-t-[2.5rem] p-6 pb-10 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-serif text-primary font-bold" data-i18n="languageSettingsTitle">Select Language</h2><button onclick="closeModal('modal-language')" class="text-tertiary bg-outline-variant/20 rounded-full p-1"><span class="material-symbols-outlined">close</span></button></div><div class="flex flex-col gap-3 overflow-y-auto no-scrollbar pb-4"><button onclick="setLanguage('ko')" id="lang-ko" class="lang-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary">한국어 (Korean)</span></button><button onclick="setLanguage('en')" id="lang-en" class="lang-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary">English</span></button><button onclick="setLanguage('es')" id="lang-es" class="lang-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary">Español (Spanish)</span></button><button onclick="setLanguage('zh')" id="lang-zh" class="lang-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary">中文 (Chinese)</span></button><button onclick="setLanguage('ja')" id="lang-ja" class="lang-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary">日本語 (Japanese)</span></button></div></div>
         </div>
 
-        <div id="modal-theme" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="closeModal('modal-theme', event)">
+        <div id="modal-theme" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="onOverlayClick(event, 'modal-theme')">
             <div class="modal-content bg-surface w-full max-h-[85vh] rounded-t-[2.5rem] p-6 pb-10 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-serif text-primary font-bold" data-i18n="themeModalTitle">테마 설정</h2><button onclick="closeModal('modal-theme')" class="text-tertiary bg-outline-variant/20 rounded-full p-1"><span class="material-symbols-outlined">close</span></button></div><div class="flex flex-col gap-3 overflow-y-auto no-scrollbar pb-4"><button onclick="setTheme('light')" id="theme-light" class="theme-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary" data-i18n="themeLight">라이트 모드</span></button><button onclick="setTheme('dark')" id="theme-dark" class="theme-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary" data-i18n="themeDark">다크 모드</span></button><button onclick="setTheme('auto')" id="theme-auto" class="theme-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary" data-i18n="themeAuto">자동</span></button></div></div>
         </div>
 
-        <div id="modal-bell" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="closeModal('modal-bell', event)">
+        <div id="modal-bell" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="onOverlayClick(event, 'modal-bell')">
             <div class="modal-content bg-surface w-full max-h-[85vh] rounded-t-[2.5rem] p-6 pb-10 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-serif text-primary font-bold" data-i18n="bellModalTitle">종소리 라이브러리</h2><button onclick="closeModal('modal-bell')" class="text-tertiary bg-outline-variant/20 rounded-full p-1"><span class="material-symbols-outlined">close</span></button></div><div class="flex flex-col gap-3 overflow-y-auto no-scrollbar pb-4"><button onclick="changeBell('none')" id="bell-none" class="bell-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary" data-i18n="bellNone">종소리 없음 (None)</span></button><button onclick="changeBell('tibetan')" id="bell-tibetan" class="bell-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary" data-i18n="bellTibetan">사원의 종소리</span></button><button onclick="changeBell('crystal')" id="bell-crystal" class="bell-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary" data-i18n="bellCrystal">크리스탈 볼</span></button><button onclick="changeBell('gong')" id="bell-gong" class="bell-btn w-full flex justify-between items-center p-4 rounded-xl border border-glass-border bg-glass-bg hover:bg-glass-bg-hover transition-all"><span class="font-sans text-sm font-medium text-tertiary" data-i18n="bellGong">깊은 징</span></button></div></div>
         </div>
 
-        <div id="modal-all-presets" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="closeModal('modal-all-presets', event)">
+        <div id="modal-all-presets" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="onOverlayClick(event, 'modal-all-presets')">
             <div class="modal-content bg-surface w-full h-[85vh] rounded-t-[2.5rem] p-6 pb-10 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"><div class="flex justify-between items-center mb-6"><h2 id="all-presets-title" class="text-2xl font-serif text-primary font-bold">All Presets</h2><button onclick="closeModal('modal-all-presets')" class="text-tertiary bg-outline-variant/20 rounded-full p-1"><span class="material-symbols-outlined">close</span></button></div><div id="modal-presets-grid" class="grid grid-cols-2 gap-4 overflow-y-auto no-scrollbar pb-8"></div></div>
         </div>
 
-        <div id="modal-paywall" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="closeModal('modal-paywall', event)">
+        <div id="modal-paywall" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="onOverlayClick(event, 'modal-paywall')">
             <div class="modal-content bg-surface w-full max-h-[90vh] rounded-t-[2.5rem] p-6 pb-10 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-serif text-primary font-bold flex items-center gap-2">Premium <span class="material-symbols-outlined text-[#A69177] text-[20px]">lock_open</span></h2><button onclick="closeModal('modal-paywall')" class="text-tertiary bg-outline-variant/20 rounded-full p-1"><span class="material-symbols-outlined">close</span></button></div><div class="text-center mb-6"><p class="text-sm font-sans text-tertiary/80 leading-relaxed" data-i18n="paywallDesc">모든 프리미엄 사운드와 커스텀 기능을<br>잠금 해제하고 더 깊은 휴식을 경험하세요.</p></div><div class="flex flex-col gap-3 mb-8"><button class="w-full p-4 rounded-2xl border-2 border-primary bg-primary/5 flex justify-between items-center text-left relative overflow-hidden transition-transform active:scale-95"><div class="absolute top-0 right-0 bg-primary text-on-primary text-[10px] px-3 py-0.5 rounded-bl-lg font-bold">BEST VALUE</div><div><h4 class="font-bold text-primary font-sans text-lg" data-i18n="payYearly">연간 구독</h4><p class="text-xs text-tertiary mt-1" data-i18n="payYearlyPrice">월 $4.99 / 연 $59.99</p></div><span class="text-xs bg-surface text-primary border border-primary px-3 py-1.5 rounded-full font-bold shadow-sm" data-i18n="payTrial">7일 무료</span></button><button class="w-full p-4 rounded-2xl border border-glass-border bg-glass-bg flex justify-between items-center text-left transition-transform active:scale-95"><div><h4 class="font-bold text-tertiary font-sans" data-i18n="payMonthly">월간 구독</h4><p class="text-xs text-tertiary mt-1" data-i18n="payMonthlyPrice">$9.99 / 월</p></div></button></div><button onclick="showAlert(getI18nStr('paywallDemoAlert'))" class="w-full bg-primary text-on-primary py-4 rounded-2xl font-bold text-lg shadow-xl mb-4 active:scale-95 transition-transform" data-i18n="payStart">무료 체험 시작하기</button></div>
         </div>
 
-        <div id="modal-analysis" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="closeModal('modal-analysis', event)">
+        <div id="modal-analysis" class="modal-overlay hidden fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex-col opacity-0" onclick="onOverlayClick(event, 'modal-analysis')">
             <div class="modal-content bg-surface w-full max-h-[85vh] rounded-t-[2.5rem] p-6 pb-12 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-serif text-primary font-bold" data-i18n="analysisTitle">여정 분석</h2>
@@ -259,8 +264,13 @@
     </div>
 
     <script>
+        // 기본 스크롤 복원 동작 막기 (화면 튐 버그 방지)
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
         // ==========================================
-        // 0. DualAudioPlayer 클래스 (Seamless Crossfade Loop 구현)
+        // 0. DualAudioPlayer 클래스 (Seamless Crossfade Loop)
         // ==========================================
         class DualAudioPlayer {
             constructor() {
@@ -278,17 +288,19 @@
                 this.isPlaying = false;
                 this.isCrossfading = false;
                 this.crossfadeInterval = null;
+                this.externalFadeInterval = null;
 
-                const onTimeUpdate = (e) => {
-                    const audio = e.target;
-                    if (!this.isPlaying || this.isCrossfading) return;
+                var self = this;
+                var onTimeUpdate = function(e) {
+                    var audio = e.target;
+                    if (!self.isPlaying || self.isCrossfading) return;
                     
-                    if (audio === this.active && audio.duration > 0) {
-                        let currentFade = this.fadeDuration;
+                    if (audio === self.active && audio.duration > 0) {
+                        var currentFade = self.fadeDuration;
                         if(audio.duration < 5) currentFade = audio.duration * 0.2; 
 
                         if (audio.duration - audio.currentTime <= currentFade) {
-                            this.doCrossfade(currentFade);
+                            self.doCrossfade(currentFade);
                         }
                     }
                 };
@@ -296,8 +308,8 @@
                 this.audioA.addEventListener('timeupdate', onTimeUpdate);
                 this.audioB.addEventListener('timeupdate', onTimeUpdate);
 
-                this.audioA.addEventListener('ended', () => this.fallbackSwap(this.audioB, this.audioA));
-                this.audioB.addEventListener('ended', () => this.fallbackSwap(this.audioA, this.audioB));
+                this.audioA.addEventListener('ended', function(){ self.fallbackSwap(self.audioB, self.audioA); });
+                this.audioB.addEventListener('ended', function(){ self.fallbackSwap(self.audioA, self.audioB); });
             }
 
             fallbackSwap(nextAudio, prevAudio) {
@@ -305,7 +317,7 @@
                 prevAudio.pause();
                 prevAudio.currentTime = 0;
                 nextAudio.volume = this.isMuted ? 0 : this.targetVolume;
-                nextAudio.play().catch(()=>{});
+                nextAudio.play().catch(function(){});
                 this.active = nextAudio;
                 this.inactive = prevAudio;
                 this.isCrossfading = false;
@@ -321,10 +333,125 @@
                 this.audioB.load();
             }
 
+            // 명상 중 음원 변경시 부드러운 전환 (NEW v1.6.4)
+            // 기존 active 트랙을 페이드아웃하면서 inactive에 새 src를 페이드인.
+            crossfadeToSrc(url, fadeTime) {
+                if (!fadeTime) fadeTime = 2.0;
+                this.src = url;
+
+                if (!this.isPlaying) {
+                    // 재생 중이 아니면 그냥 src만 교체
+                    this.setSrc(url);
+                    return;
+                }
+
+                clearInterval(this.crossfadeInterval);
+                this.isCrossfading = true;
+
+                var fadingOut = this.active;
+                var fadingIn = this.inactive;
+
+                fadingIn.src = url;
+                fadingIn.load();
+                fadingIn.currentTime = 0;
+                fadingIn.volume = 0;
+                fadingIn.play().catch(function(){});
+
+                var steps = 25;
+                var stepTime = (fadeTime * 1000) / steps;
+                var startVol = fadingOut.volume;
+                var endVol = this.isMuted ? 0 : this.targetVolume;
+                var currentStep = 0;
+                var self = this;
+
+                this.crossfadeInterval = setInterval(function(){
+                    currentStep++;
+                    if (currentStep >= steps) {
+                        clearInterval(self.crossfadeInterval);
+                        fadingOut.pause();
+                        fadingOut.currentTime = 0;
+                        // 빈 src로 두지 말고 같은 url 유지 (다음 자연 크로스페이드 대비)
+                        fadingOut.src = url;
+                        fadingOut.load();
+                        fadingIn.volume = endVol;
+                        self.active = fadingIn;
+                        self.inactive = fadingOut;
+                        self.isCrossfading = false;
+                    } else {
+                        var ratio = currentStep / steps;
+                        if(!self.isMuted) {
+                            fadingOut.volume = Math.max(0, startVol * (1 - ratio));
+                            fadingIn.volume = Math.min(endVol, endVol * ratio);
+                        }
+                    }
+                }, stepTime);
+            }
+
+            // 외부에서 시작 페이드인 요청 (NEW v1.6.4) - 시작 종소리가 묻히지 않게
+            playWithFadeIn(fadeTime) {
+                if (!fadeTime) fadeTime = 1.5;
+                this.isPlaying = true;
+                this.active.volume = 0;
+                this.active.play().catch(function(){});
+                
+                clearInterval(this.externalFadeInterval);
+                var self = this;
+                var steps = 20;
+                var stepTime = (fadeTime * 1000) / steps;
+                var endVol = this.isMuted ? 0 : this.targetVolume;
+                var currentStep = 0;
+                this.externalFadeInterval = setInterval(function(){
+                    currentStep++;
+                    if (currentStep >= steps) {
+                        clearInterval(self.externalFadeInterval);
+                        if (!self.isCrossfading && !self.isMuted) self.active.volume = self.targetVolume;
+                    } else {
+                        if (!self.isCrossfading && !self.isMuted) {
+                            self.active.volume = Math.min(endVol, (endVol * currentStep) / steps);
+                        }
+                    }
+                }, stepTime);
+            }
+
+            // 외부에서 종료 페이드아웃 요청 (NEW v1.6.4)
+            // 페이드아웃 중에도 stop() 충돌 안 나도록 안전하게 처리
+            fadeOutAndStop(fadeTime, onDone) {
+                if (!fadeTime) fadeTime = 3.0;
+                if (!this.isPlaying) {
+                    this.stop();
+                    if (onDone) onDone();
+                    return;
+                }
+                clearInterval(this.crossfadeInterval);
+                clearInterval(this.externalFadeInterval);
+                this.isCrossfading = true; // 자동 크로스페이드 차단
+
+                var self = this;
+                var startVolA = this.audioA.volume;
+                var startVolB = this.audioB.volume;
+                var steps = 30;
+                var stepTime = (fadeTime * 1000) / steps;
+                var currentStep = 0;
+                this.externalFadeInterval = setInterval(function(){
+                    currentStep++;
+                    if (currentStep >= steps) {
+                        clearInterval(self.externalFadeInterval);
+                        self.stop();
+                        if (onDone) onDone();
+                    } else {
+                        var ratio = 1 - (currentStep / steps);
+                        if (!self.isMuted) {
+                            self.audioA.volume = startVolA * ratio;
+                            self.audioB.volume = startVolB * ratio;
+                        }
+                    }
+                }, stepTime);
+            }
+
             play() {
                 this.isPlaying = true;
                 this.active.volume = this.isMuted ? 0 : this.targetVolume;
-                this.active.play().catch(()=>{});
+                this.active.play().catch(function(){});
             }
 
             pause() {
@@ -332,6 +459,7 @@
                 this.audioA.pause();
                 this.audioB.pause();
                 clearInterval(this.crossfadeInterval);
+                clearInterval(this.externalFadeInterval);
                 this.isCrossfading = false;
             }
 
@@ -345,8 +473,8 @@
 
             setVolume(vol) {
                 this.targetVolume = vol;
-                if (!this.isCrossfading) {
-                    this.active.volume = this.isMuted ? 0 : this.targetVolume;
+                if (!this.isCrossfading && !this.externalFadeInterval) {
+                    if (!this.isMuted) this.active.volume = this.targetVolume;
                 }
             }
 
@@ -365,8 +493,9 @@
 
             unlock() {
                 if(this.src) {
-                    this.audioA.play().catch(()=>{}); this.audioA.pause(); this.audioA.currentTime = 0;
-                    this.audioB.play().catch(()=>{}); this.audioB.pause(); this.audioB.currentTime = 0;
+                    var self = this;
+                    this.audioA.play().catch(function(){}); this.audioA.pause(); this.audioA.currentTime = 0;
+                    this.audioB.play().catch(function(){}); this.audioB.pause(); this.audioB.currentTime = 0;
                 }
             }
 
@@ -374,33 +503,34 @@
                 if (this.isCrossfading || !this.isPlaying) return;
                 this.isCrossfading = true;
 
-                const fadingOut = this.active;
-                const fadingIn = this.inactive;
+                var fadingOut = this.active;
+                var fadingIn = this.inactive;
 
                 fadingIn.currentTime = 0;
                 fadingIn.volume = 0;
-                fadingIn.play().catch(()=>{});
+                fadingIn.play().catch(function(){});
 
-                const steps = 25; 
-                const stepTime = (fadeTime * 1000) / steps;
-                const volStep = this.targetVolume / steps;
+                var steps = 25; 
+                var stepTime = (fadeTime * 1000) / steps;
+                var volStep = this.targetVolume / steps;
 
-                let currentStep = 0;
+                var currentStep = 0;
+                var self = this;
 
-                this.crossfadeInterval = setInterval(() => {
+                this.crossfadeInterval = setInterval(function(){
                     currentStep++;
                     if (currentStep >= steps) {
-                        clearInterval(this.crossfadeInterval);
+                        clearInterval(self.crossfadeInterval);
                         fadingOut.pause();
                         fadingOut.currentTime = 0;
-                        fadingIn.volume = this.isMuted ? 0 : this.targetVolume;
-                        this.active = fadingIn;
-                        this.inactive = fadingOut;
-                        this.isCrossfading = false;
+                        fadingIn.volume = self.isMuted ? 0 : self.targetVolume;
+                        self.active = fadingIn;
+                        self.inactive = fadingOut;
+                        self.isCrossfading = false;
                     } else {
-                        if(!this.isMuted) {
-                            fadingOut.volume = Math.max(0, this.targetVolume - (volStep * currentStep));
-                            fadingIn.volume = Math.min(this.targetVolume, volStep * currentStep);
+                        if(!self.isMuted) {
+                            fadingOut.volume = Math.max(0, self.targetVolume - (volStep * currentStep));
+                            fadingIn.volume = Math.min(self.targetVolume, volStep * currentStep);
                         }
                     }
                 }, stepTime);
@@ -423,7 +553,7 @@
                 navHome: "홈", navLibrary: "라이브러리", navJourney: "여정", customTimeTitle: "명상 시간 설정", confirm: "확인", cancelBtn: "취소", alertTitle: "알림",
                 languageSettingsTitle: "언어 설정", bellModalTitle: "종소리 라이브러리", 
                 bellNone: "종소리 없음 (None)", bellTibetan: "사원의 종소리", bellCrystal: "크리스탈 볼", bellGong: "깊은 징",
-                paywallDesc: "모든 프리미엄 사운드와 커스텀 기능을<br>잠금 해제하고 더 깊은 휴식을 경험하세요.", stopMeditationFirst: "명상을 먼저 종료해 주세요.",
+                paywallDesc: "모든 프리미엄 사운드와 커스텀 기능을<br>잠금 해제하고 더 깊은 휴식을 경험하세요.", meditationBackBlocked: "명상 중에는 화면의 버튼으로 종료하세요.",
                 payYearly: "연간 구독", payYearlyPrice: "월 $4.99 / 연 $59.99", payTrial: "7일 무료", payMonthly: "월간 구독", payMonthlyPrice: "$9.99 / 월", payStart: "무료 체험 시작하기",
                 paywallDemoAlert: "결제 시스템 데모입니다.", finishMsg: "수고하셨습니다. 명상 세션이 완료되었습니다.", restoreMsgLoading: "구매 내역을 확인 중입니다...", restoreMsgSuccess: "구매 복원이 완료되었습니다.", breatheIn: "숨을 들이마십니다", breatheOut: "천천히 내뱉습니다",
                 resetData: "여정 데이터 초기화", resetConfirmMsg: "모든 명상 기록과 통계가 삭제됩니다. 정말 초기화하시겠습니까?", resetDoneMsg: "모든 여정 데이터가 초기화되었습니다.", analysisTitle: "여정 분석", mostUsedSound: "가장 자주 머문 무드", favoriteTime: "가장 선호하는 시간대", timeMorning: "아침 (5AM - 12PM)", timeAfternoon: "오후 (12PM - 6PM)", timeEvening: "저녁 (6PM - 10PM)", timeNight: "밤 (10PM - 5AM)", notEnoughData: "데이터 부족"
@@ -439,7 +569,7 @@
                 settingsSubTitle: "Subscription & Account", subPlan: "Your Plan", subStatusFree: "Free Basic Plan", upgrade: "Upgrade", restorePurchase: "Restore Purchase",
                 navHome: "Home", navLibrary: "Library", navJourney: "Journey", customTimeTitle: "Set Custom Time", confirm: "Confirm", cancelBtn: "Cancel", alertTitle: "Notice",
                 languageSettingsTitle: "Select Language", bellModalTitle: "Bell Library", bellNone: "None", bellTibetan: "Tibetan Bowl", bellCrystal: "Crystal Bowl", bellGong: "Deep Gong",
-                paywallDesc: "Unlock all premium sounds and custom features<br>to experience deeper relaxation.", stopMeditationFirst: "Please stop meditation first.", payYearly: "Yearly", payYearlyPrice: "$4.99 / mo (Billed $59.99/yr)", payTrial: "7 Days Free", payMonthly: "Monthly", payMonthlyPrice: "$9.99 / mo", payStart: "Start Free Trial",
+                paywallDesc: "Unlock all premium sounds and custom features<br>to experience deeper relaxation.", meditationBackBlocked: "Use the stop button to end meditation.", payYearly: "Yearly", payYearlyPrice: "$4.99 / mo (Billed $59.99/yr)", payTrial: "7 Days Free", payMonthly: "Monthly", payMonthlyPrice: "$9.99 / mo", payStart: "Start Free Trial",
                 paywallDemoAlert: "Payment gateway demo.", finishMsg: "Great job. Your meditation session is complete.", restoreMsgLoading: "Checking store purchases...", restoreMsgSuccess: "Purchase successfully restored.", breatheIn: "Breathe in", breatheOut: "Breathe out slowly",
                 resetData: "Reset Journey Data", resetConfirmMsg: "All meditation history will be deleted. Are you sure?", resetDoneMsg: "Journey data has been reset.", analysisTitle: "Journey Analysis", mostUsedSound: "Most Visited Mood", favoriteTime: "Favorite Time of Day", timeMorning: "Morning", timeAfternoon: "Afternoon", timeEvening: "Evening", timeNight: "Night", notEnoughData: "Not enough data"
             },
@@ -451,7 +581,7 @@
                 settingsSubTitle: "Suscripción y Cuenta", subPlan: "Tu Plan", subStatusFree: "Plan Básico", upgrade: "Mejorar", restorePurchase: "Restaurar Compra",
                 navHome: "Inicio", navLibrary: "Biblioteca", navJourney: "Viaje", customTimeTitle: "Tiempo", confirm: "Confirmar", cancelBtn: "Cancelar", alertTitle: "Aviso",
                 languageSettingsTitle: "Seleccionar Idioma", bellModalTitle: "Campanas", bellNone: "Ninguna", bellTibetan: "Cuenco Tibetano", bellCrystal: "Cuenco de Cristal", bellGong: "Gong Profundo",
-                paywallDesc: "Desbloquea todos los sonidos premium y funciones<br>para experimentar una relajación más profunda.", stopMeditationFirst: "Por favor, detén la meditación primero.", payYearly: "Anual", payYearlyPrice: "$4.99/mes ($59.99/año)", payTrial: "7 Días Gratis", payMonthly: "Mensual", payMonthlyPrice: "$9.99 / mes", payStart: "Empezar Prueba",
+                paywallDesc: "Desbloquea todos los sonidos premium y funciones<br>para experimentar una relajación más profunda.", meditationBackBlocked: "Usa el botón de parar para terminar.", payYearly: "Anual", payYearlyPrice: "$4.99/mes ($59.99/año)", payTrial: "7 Días Gratis", payMonthly: "Mensual", payMonthlyPrice: "$9.99 / mes", payStart: "Empezar Prueba",
                 paywallDemoAlert: "Demostración de pago.", finishMsg: "Excelente trabajo. Tu sesión ha terminado.", restoreMsgLoading: "Buscando...", restoreMsgSuccess: "Compra restaurada.", breatheIn: "Inhala", breatheOut: "Exhala", resetData: "Reiniciar Datos", resetConfirmMsg: "Todo el historial será eliminado. ¿Estás seguro?", resetDoneMsg: "Los datos han sido reiniciados.", analysisTitle: "Análisis del Viaje", mostUsedSound: "Sonido Favorito", favoriteTime: "Momento Favorito", timeMorning: "Mañana", timeAfternoon: "Tarde", timeEvening: "Tarde/Noche", timeNight: "Noche", notEnoughData: "Sin datos"
             },
             zh: {
@@ -459,7 +589,7 @@
                 currentMood: "(当前情绪)", min5: "5分钟", min10: "10分钟", min15: "15分钟", customTime: "自定义", startMeditation: "开始冥想", mixerTitle: "声音混音器", bellStartEnd: "开始/结束铃声", bellInterval: "间隔铃声", libraryTitle: "声音库", freePresets: "免费预设", premiumPresets: "高级预设", seeAll: "查看全部",
                 journeyTitle: "您的旅程", totalTimeLabel: "总时长", minuteUnit: "分钟", streakLabel: "连续打卡", dayUnit: "天", settingsMeditationTitle: "冥想设置", languageSettings: "语言", bellSettings: "冥想铃声", dndMode: "勿扰模式", dndDesc: "冥想时静音通知 (即将推出)", themeSettings: "主题", themeModalTitle: "选择主题", themeLight: "浅色模式", themeDark: "深色模式", themeAuto: "自动",
                 settingsSubTitle: "订阅与账户", subPlan: "您的计划", subStatusFree: "免费基础计划", upgrade: "升级", restorePurchase: "恢复购买", navHome: "首页", navLibrary: "音频库", navJourney: "旅程", customTimeTitle: "自定义时间", confirm: "确认", cancelBtn: "取消", alertTitle: "提示",
-                languageSettingsTitle: "选择语言", bellModalTitle: "铃声库", bellNone: "无", bellTibetan: "西藏颂钵", bellCrystal: "水晶钵", bellGong: "深沉铜锣", paywallDesc: "解锁所有高级声音和自定义功能，<br>体验更深层次的放松。", stopMeditationFirst: "请先停止冥想。", payYearly: "年度订阅", payYearlyPrice: "每月 $4.99 / 每年 $59.99", payTrial: "免费试用", payMonthly: "月度订阅", payMonthlyPrice: "$9.99 / 月", payStart: "开始免费试用",
+                languageSettingsTitle: "选择语言", bellModalTitle: "铃声库", bellNone: "无", bellTibetan: "西藏颂钵", bellCrystal: "水晶钵", bellGong: "深沉铜锣", paywallDesc: "解锁所有高级声音和自定义功能，<br>体验更深层次的放松。", meditationBackBlocked: "请使用停止按钮结束冥想。", payYearly: "年度订阅", payYearlyPrice: "每月 $4.99 / 每年 $59.99", payTrial: "免费试用", payMonthly: "月度订阅", payMonthlyPrice: "$9.99 / 月", payStart: "开始免费试用",
                 paywallDemoAlert: "支付系统演示。", finishMsg: "辛苦了。您的冥想环节已完成。", restoreMsgLoading: "正在检查...", restoreMsgSuccess: "恢复成功。", breatheIn: "吸气", breatheOut: "呼气", resetData: "重置数据", resetConfirmMsg: "所有历史记录将被删除。确定吗？", resetDoneMsg: "数据已重置。", analysisTitle: "旅程分析", mostUsedSound: "最常用的声音", favoriteTime: "首选时间", timeMorning: "早晨", timeAfternoon: "下午", timeEvening: "傍晚", timeNight: "夜晚", notEnoughData: "数据不足"
             },
             ja: {
@@ -467,7 +597,7 @@
                 currentMood: "(現在のムード)", min5: "5分", min10: "10分", min15: "15分", customTime: "設定", startMeditation: "瞑想を始める", mixerTitle: "ミキサー", bellStartEnd: "開始/終了の鐘", bellInterval: "インターバルの鐘", libraryTitle: "ライブラリ", freePresets: "無料プリセット", premiumPresets: "プレミアム", seeAll: "すべて",
                 journeyTitle: "記録", totalTimeLabel: "合計時間", minuteUnit: "分", streakLabel: "連続記録", dayUnit: "日", settingsMeditationTitle: "設定", languageSettings: "言語", bellSettings: "鐘", dndMode: "おやすみモード", dndDesc: "瞑想中の通知をミュート (予定)", themeSettings: "テーマ", themeModalTitle: "テーマ", themeLight: "ライト", themeDark: "ダーク", themeAuto: "自動",
                 settingsSubTitle: "アカウント", subPlan: "プラン", subStatusFree: "無料プラン", upgrade: "アップグレード", restorePurchase: "購入の復元", navHome: "ホーム", navLibrary: "ライブラリ", navJourney: "記録", customTimeTitle: "時間", confirm: "確認", cancelBtn: "キャンセル", alertTitle: "お知らせ",
-                languageSettingsTitle: "言語", bellModalTitle: "鐘", bellNone: "なし", bellTibetan: "チベットボウル", bellCrystal: "クリスタルボウル", bellGong: "ゴング", paywallDesc: "すべての機能をロック解除して、<br>より深いリラクゼーションを。", stopMeditationFirst: "先に瞑想を終了してください。", payYearly: "年間", payYearlyPrice: "月額 $4.99 / 年額 $59.99", payTrial: "7日間無料", payMonthly: "月間", payMonthlyPrice: "$9.99 / 月", payStart: "無料トライアル",
+                languageSettingsTitle: "言語", bellModalTitle: "鐘", bellNone: "なし", bellTibetan: "チベットボウル", bellCrystal: "クリスタルボウル", bellGong: "ゴング", paywallDesc: "すべての機能をロック解除して、<br>より深いリラクゼーションを。", meditationBackBlocked: "停止ボタンで瞑想を終了してください。", payYearly: "年間", payYearlyPrice: "月額 $4.99 / 年額 $59.99", payTrial: "7日間無料", payMonthly: "月間", payMonthlyPrice: "$9.99 / 月", payStart: "無料トライアル",
                 paywallDemoAlert: "デモです。", finishMsg: "お疲れ様でした。", restoreMsgLoading: "確認中...", restoreMsgSuccess: "復元しました。", breatheIn: "息を吸って", breatheOut: "息を吐いて", resetData: "データ初期化", resetConfirmMsg: "全ての記録が削除されます。よろしいですか？", resetDoneMsg: "初期化されました。", analysisTitle: "記録分析", mostUsedSound: "よく聴くサウンド", favoriteTime: "よく瞑想する時間帯", timeMorning: "朝", timeAfternoon: "昼", timeEvening: "夕方", timeNight: "夜", notEnoughData: "データなし"
             }
         };
@@ -483,7 +613,7 @@
         const langNames = { ko: "한국어", en: "English", es: "Español", zh: "中文", ja: "日本語" };
 
         // ==========================================
-        // 2. 상태 및 엣지 케이스 방어 변수
+        // 2. 상태 변수
         // ==========================================
         const STORAGE_KEY = 'neul_meditation_data';
         let userData = {
@@ -505,6 +635,9 @@
 
         let activeModals = [];
         let confirmAction = null;
+        
+        // 뒤로가기 관련 (앱 무단 종료 방지)
+        // v1.6.7: replaceState 방식으로 변경되어 lastBackPressTime, programmaticBackCount 불필요
 
         let audioAsmr, audioAmbient;
         
@@ -527,6 +660,13 @@
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
+            // === v1.6.5: history buffer 시스템 ===
+            // 모바일 OS의 빠른 뒤로가기에 대비해 "buffer guard" 1개를 항상 스택 위에 유지.
+            // 스택 구조: [home_base, home_guard, (선택적) meditation, (선택적) modal...]
+            // 어떤 popstate가 발생해도 guard가 흡수해주므로 앱이 실수로 종료되지 않음.
+            history.replaceState({ page: 'home_base' }, "", "");
+            history.pushState({ page: 'home_guard' }, "", "");
+
             audioAsmr = new DualAudioPlayer();
             audioAmbient = new DualAudioPlayer();
 
@@ -547,49 +687,100 @@
 
         function loadUserData() {
             const saved = localStorage.getItem(STORAGE_KEY);
-            if(saved) userData = { ...userData, ...JSON.parse(saved) };
+            if(saved) {
+                try {
+                    userData = { ...userData, ...JSON.parse(saved) };
+                } catch(e) {
+                    console.warn('userData parse failed, using defaults');
+                }
+            }
             if(userData.lang) currentLang = userData.lang;
             if(userData.theme) currentThemeSetting = userData.theme;
         }
 
-        function saveUserData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(userData)); }
+        function saveUserData() { 
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(userData)); }
+            catch(e) { console.warn('saveUserData failed', e); }
+        }
 
-        // History API 기반 라우팅 및 뒤로가기 방어 로직
-        window.addEventListener('popstate', (e) => {
-            if (isMeditating) {
-                // 뒤로가기를 눌러도 명상 플레이어에서 나가지 못하도록 히스토리를 강제 유지
-                history.pushState({ modalId: 'meditation' }, "", "#_meditating");
-                showAlert(getI18nStr('stopMeditationFirst'));
-                return;
-            }
+        // ==========================================
+        // History API 라우팅 (v1.6.7: replaceState 방식)
+        // ==========================================
+        // 설계:
+        //   - 모달 닫기(버튼/백드롭): replaceState로 guard 덮어씀 → popstate 발생 안 함
+        //   - 모달 닫기(뒤로가기): popstate 발생 → 아래 핸들러에서 처리
+        //   - 명상 뒤로가기: 완전 차단, guard 재push
+        //   - 홈 뒤로가기: guard 재push (앱 종료 방지)
+        window.addEventListener('popstate', function(e) {
+            // 1. 모달이 열려있으면 뒤로가기로 닫힌 것 → DOM 닫고 guard 보충
             if(activeModals.length > 0) {
                 const modalId = activeModals.pop();
                 hideModalDOM(modalId);
+                const guardState = isMeditating
+                    ? { page: 'meditation_guard' }
+                    : { page: 'home_guard' };
+                history.pushState(guardState, "", "");
+                return;
             }
+
+            // 2. 명상 중 뒤로가기 → 완전 차단, guard 재push, 토스트
+            if (isMeditating) {
+                history.pushState({ page: 'meditation_guard' }, "", "");
+                showToast(getI18nStr('meditationBackBlocked'));
+                return;
+            }
+
+            // 3. 홈 화면에서 뒤로가기 → guard 재push (앱 종료 방지)
+            history.pushState({ page: 'home_guard' }, "", "");
         });
+
+        // ==========================================
+        // 모달 오픈/클로즈 (v1.6.7)
+        // ==========================================
+        // 핵심 설계 변경:
+        // - 모달 열기: pushState({modalId}) — 뒤로가기로 닫을 수 있는 entry 추가
+        // - 모달 닫기(버튼): history.back() 를 절대 호출하지 않음.
+        //   대신 현재 history entry를 replaceState로 guard로 덮어씀.
+        //   → 브라우저가 "뒤로 가는" 동작을 수행하지 않으므로 화면 밀림/깜박임 없음.
+        // - 모달 닫기(뒤로가기): popstate에서 처리. 이미 pop이 된 상태이므로 pushState로 guard 보충.
 
         function openModal(modalId) {
             if (activeModals.includes(modalId)) return;
             const modal = document.getElementById(modalId);
+            if (!modal) return;
             modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); modal.classList.add('modal-active'); }, 10);
-            
+            setTimeout(function() {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('modal-active');
+            }, 10);
             activeModals.push(modalId);
-            history.pushState({ modalId: modalId }, "", "#_view");
-            if(modalId === 'modal-analysis') updateAnalysisUI(); 
+            // 이 모달 entry를 history에 추가 (뒤로가기로 닫을 수 있도록)
+            history.pushState({ modalId: modalId }, "", "");
+            if(modalId === 'modal-analysis') updateAnalysisUI();
         }
 
-        function closeModal(modalId, event) {
-            if(event && event.target.id !== modalId && !event.target.closest('button')) return; 
-            hideModalDOM(modalId);
-            
+        // 백드롭(overlay 자체) 클릭만 닫기
+        function onOverlayClick(event, modalId) {
+            if (event && event.target.id === modalId) {
+                closeModal(modalId);
+            }
+        }
+
+        function closeModal(modalId) {
             const index = activeModals.indexOf(modalId);
             if(index > -1) {
                 activeModals.splice(index, 1);
-                if(history.state && history.state.modalId === modalId) {
-                    history.back();
-                }
             }
+            hideModalDOM(modalId);
+
+            // history.back() 을 호출하지 않고 현재 entry를 guard로 덮어씀.
+            // 이렇게 하면 브라우저가 "뒤로 이동" 애니메이션을 실행하지 않아
+            // 화면 밀림/깜박임이 발생하지 않는다.
+            // 스택에서 modal entry가 남아있지만 다음 popstate에서 guard로 흡수됨.
+            const guardState = isMeditating
+                ? { page: 'meditation_guard' }
+                : { page: 'home_guard' };
+            history.replaceState(guardState, "", "");
         }
 
         function hideModalDOM(modalId) {
@@ -597,7 +788,18 @@
             if(modal) {
                 modal.classList.remove('modal-active');
                 modal.classList.add('opacity-0');
-                setTimeout(() => { modal.classList.add('hidden'); }, 400);
+                setTimeout(function() { modal.classList.add('hidden'); }, 400);
+            }
+        }
+
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast-container');
+            if(toast) {
+                toast.firstElementChild.innerText = msg;
+                toast.classList.remove('opacity-0');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => { toast.classList.add('opacity-0'); }, 2000);
             }
         }
 
@@ -612,8 +814,10 @@
             openModal('modal-confirm');
         }
         function executeConfirm() {
-            if(confirmAction) confirmAction();
+            const action = confirmAction;
+            confirmAction = null;
             closeModal('modal-confirm');
+            if(action) action();
         }
 
         function updateActiveState(selectorGroup, activeId) {
@@ -657,7 +861,7 @@
 
         function initLanguageSystem() {
             if (!userData.lang) {
-                const sysLang = (navigator.language || navigator.userLanguage).toLowerCase();
+                const sysLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
                 if (sysLang.startsWith('ko')) currentLang = 'ko'; else if (sysLang.startsWith('es')) currentLang = 'es';
                 else if (sysLang.startsWith('zh')) currentLang = 'zh'; else if (sysLang.startsWith('ja')) currentLang = 'ja';
                 else currentLang = 'en';
@@ -682,13 +886,13 @@
                 customBtnElement.innerHTML = `<span class="font-bold">${selectedMinutes}${getI18nStr('minuteUnit')}</span>`;
             }
         }
-        function getI18nStr(key) { return i18n[currentLang][key]; }
+        function getI18nStr(key) { return i18n[currentLang][key] || i18n.en[key] || key; }
 
         function updateDynamicText() {
             const hour = new Date().getHours(); let greetingKey = "greetingEvening";
             if (hour >= 5 && hour < 12) greetingKey = "greetingMorning"; else if (hour >= 12 && hour < 18) greetingKey = "greetingAfternoon"; else if (hour >= 18 && hour < 22) greetingKey = "greetingEvening"; else greetingKey = "greetingNight";
             document.getElementById('greeting-title').innerText = getI18nStr(greetingKey);
-            const quotes = quotesData[currentLang]; document.getElementById('greeting-quote').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+            const quotes = quotesData[currentLang] || quotesData.en; document.getElementById('greeting-quote').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
         }
 
         function initThemeSystem() { setTheme(userData.theme); }
@@ -762,23 +966,27 @@
             else customBtn.innerHTML = `<span>${getI18nStr('customTime')}</span>`;
         }
 
+        // ==========================================
+        // 무드 변경 (v1.6.4: 명상 중일 때 부드러운 크로스페이드)
+        // ==========================================
         function changeMood(index, playImmediate = true) {
             if(isProcessingAction || !appPresets[index]) return;
             const p = appPresets[index]; currentPresetIndex = index;
             userData.presetIndex = index; saveUserData();
             document.getElementById('home-card-title').innerText = p.title;
-            document.getElementById('home-card-img').src = p.img; document.getElementById('meditation-bg-img').src = p.img;
+            document.getElementById('home-card-img').src = p.img; 
+            document.getElementById('meditation-bg-img').src = p.img;
             
-            const wasPlaying = isMeditating; 
-            
-            audioAsmr.setSrc(p.asmr); 
-            audioAmbient.setSrc(p.ambient);
-
-            if (playImmediate && wasPlaying) { 
-                audioAsmr.play(); 
-                audioAmbient.play(); 
-            } 
-            else if (playImmediate && !wasPlaying) { switchTab('home'); }
+            if (playImmediate && isMeditating) {
+                // 명상 중: 부드러운 크로스페이드 전환
+                audioAsmr.crossfadeToSrc(p.asmr, 2.5);
+                audioAmbient.crossfadeToSrc(p.ambient, 2.5);
+            } else {
+                // 명상 중 아님: 단순 src 교체 (재생은 startMeditation에서)
+                audioAsmr.setSrc(p.asmr);
+                audioAmbient.setSrc(p.ambient);
+                if (playImmediate) switchTab('home');
+            }
         }
 
         function nextPreset() {
@@ -800,13 +1008,13 @@
             if(bellType === 'none' || !bells[bellType]) { 
                 audioBowl.src = ""; audioAnchor.src = ""; 
                 clearTimeout(bellPreviewTimeout);
-                previewAudio.pause();
+                try { previewAudio.pause(); } catch(e) {}
             } else { 
                 audioBowl.src = bells[bellType]; audioAnchor.src = bells[bellType]; 
-                if(playSound) { 
+                // 명상 중에는 미리듣기 절대 재생하지 않음 (NEW v1.6.4)
+                if(playSound && !isMeditating) { 
                     clearTimeout(bellPreviewTimeout);
-                    previewAudio.pause(); 
-                    previewAudio.currentTime = 0; 
+                    try { previewAudio.pause(); previewAudio.currentTime = 0; } catch(e) {}
                     bellPreviewTimeout = setTimeout(() => {
                         previewAudio.src = bells[bellType]; 
                         previewAudio.play().catch(()=>{}); 
@@ -832,7 +1040,7 @@
             audioAsmr.unlock();
             audioAmbient.unlock();
             
-            // anchor만 unlock 처리하여 직접 실행되는 bowl 플레이와 충돌 방지
+            // bowl/anchor도 무음으로 한 번 깨워둔다
             audioAnchor.muted = true;
             audioAnchor.play().then(() => { 
                 audioAnchor.pause(); 
@@ -842,104 +1050,171 @@
             audioUnlocked = true;
         }
 
+        // ==========================================
+        // 명상 시작 / 종료 (v1.6.4 - 페이드 개선, isProcessingAction 안전화)
+        // ==========================================
         function startMeditation() {
             if(isMeditating || isProcessingAction) return; 
             isProcessingAction = true;
             
-            history.pushState({ modalId: 'meditation' }, "", "#_meditating");
+            try {
+                // 명상 화면을 history에 push (home_guard 위에 쌓임)
+                history.pushState({ page: 'meditation' }, "", "");
 
-            unlockAudio(); isMeditating = true;
-            ['home', 'player', 'journey'].forEach(t => { const el = document.getElementById(`tab-${t}`); el.classList.remove('z-10', 'opacity-100', 'pointer-events-auto'); el.classList.add('z-0', 'opacity-0', 'pointer-events-none'); });
-            document.getElementById('bottom-nav').classList.add('translate-y-full');
-            const medView = document.getElementById('view-meditation');
-            medView.classList.remove('z-0', 'opacity-0', 'pointer-events-none'); medView.classList.add('z-50', 'opacity-100', 'pointer-events-auto');
+                unlockAudio(); 
+                isMeditating = true;
 
-            updateTimerDisplay(); 
-            audioAsmr.play(); 
-            audioAmbient.play();
+                ['home', 'player', 'journey'].forEach(t => { 
+                    const el = document.getElementById(`tab-${t}`); 
+                    el.classList.remove('z-10', 'opacity-100', 'pointer-events-auto'); 
+                    el.classList.add('z-0', 'opacity-0', 'pointer-events-none'); 
+                });
+                document.getElementById('bottom-nav').classList.add('translate-y-full');
+                const medView = document.getElementById('view-meditation');
+                medView.classList.remove('z-0', 'opacity-0', 'pointer-events-none'); 
+                medView.classList.add('z-50', 'opacity-100', 'pointer-events-auto');
 
-            if(currentBell !== 'none' && bells[currentBell]) { 
-                audioBowl.volume = userData.volBowl; 
-                audioBowl.currentTime = 0; 
-                audioBowl.play().catch(()=>{}); 
-            }
-            
-            startBreathing();
-            meditationTimer = setInterval(() => { 
-                seconds--; 
+                seconds = selectedMinutes * 60;
                 updateTimerDisplay(); 
 
-                // 명상 종료 5초 전 음악 볼륨 페이드아웃 (Fade out at the end)
-                if (seconds <= 5 && seconds > 0) {
-                    const ratio = seconds / 5;
-                    audioAsmr.setVolume(userData.volAsmr * ratio);
-                    audioAmbient.setVolume(userData.volAmbient * ratio);
+                // 시작 종소리를 먼저 울리고 ASMR/Ambient는 페이드인
+                if(currentBell !== 'none' && bells[currentBell]) { 
+                    audioBowl.volume = isMuted ? 0 : userData.volBowl;
+                    audioBowl.muted = isMuted;
+                    audioBowl.currentTime = 0; 
+                    audioBowl.play().catch(()=>{}); 
                 }
+                
+                // 사운드 페이드인 (1.5초) - 종소리가 묻히지 않게
+                audioAsmr.setVolume(userData.volAsmr);
+                audioAmbient.setVolume(userData.volAmbient);
+                audioAsmr.playWithFadeIn(1.5);
+                audioAmbient.playWithFadeIn(1.5);
+                
+                startBreathing();
+                meditationTimer = setInterval(() => { 
+                    seconds--; 
+                    updateTimerDisplay(); 
 
-                if(seconds <= 0) stopMeditation(true); 
-            }, 1000);
-            scheduleRandomChime();
-            
-            setTimeout(() => { isProcessingAction = false; }, 500);
+                    // 마지막 8초에 부드러운 페이드아웃
+                    if (seconds <= 8 && seconds > 0) {
+                        const ratio = seconds / 8;
+                        audioAsmr.setVolume(userData.volAsmr * ratio);
+                        audioAmbient.setVolume(userData.volAmbient * ratio);
+                    }
+
+                    if(seconds <= 0) stopMeditation(true); 
+                }, 1000);
+                scheduleRandomChime();
+            } finally {
+                setTimeout(() => { isProcessingAction = false; }, 500);
+            }
         }
 
         function stopMeditation(completed = false) {
             if(!isMeditating || isProcessingAction) return;
             isProcessingAction = true;
             
-            isMeditating = false; 
-            clearInterval(meditationTimer); clearInterval(breathInterval); clearTimeout(randomChimeTimer);
-            
-            if(history.state && history.state.modalId === 'meditation') {
-                history.back(); // 명상 종료 시 히스토리 스택 원상복구
-            }
+            try {
+                isMeditating = false; 
+                clearInterval(meditationTimer); 
+                clearInterval(breathInterval); 
+                clearTimeout(randomChimeTimer);
+                
+                // v1.6.7: history.back() 대신 replaceState로 home_guard 상태로 덮어씀
+                // → 브라우저 뒤로가기 애니메이션 없음, 화면 밀림 없음
+                history.replaceState({ page: 'home_guard' }, "", "");
 
-            audioAsmr.stop(); 
-            audioAmbient.stop();
-            
-            // 다음 세션을 위해 페이드아웃된 오디오 볼륨 원상 복귀
-            audioAsmr.setVolume(userData.volAsmr);
-            audioAmbient.setVolume(userData.volAmbient);
+                // 음원 페이드아웃 후 정지 (자연스러움 향상)
+                // 단, 자동 완료(completed=true)일 때는 이미 8초간 페이드 중이었으므로 즉시 stop
+                if (completed) {
+                    audioAsmr.stop();
+                    audioAmbient.stop();
+                } else {
+                    // 사용자 정지 / 뒤로가기 정지 → 1.5초 페이드아웃
+                    audioAsmr.fadeOutAndStop(1.5);
+                    audioAmbient.fadeOutAndStop(1.5);
+                }
+                
+                // 다음 세션을 위해 볼륨을 원래 값으로 복원
+                audioAsmr.setVolume(userData.volAsmr);
+                audioAmbient.setVolume(userData.volAmbient);
 
-            if(currentBell !== 'none' && bells[currentBell]) { 
-                audioBowl.volume = userData.volBowl; 
-                audioBowl.currentTime = 0; 
-                audioBowl.play().catch(()=>{}); 
+                // 종료 종소리 (None 모드면 울리지 않음)
+                if(currentBell !== 'none' && bells[currentBell]) { 
+                    audioBowl.volume = isMuted ? 0 : userData.volBowl; 
+                    audioBowl.muted = isMuted;
+                    audioBowl.currentTime = 0; 
+                    audioBowl.play().catch(()=>{}); 
+                }
+                
+                const medView = document.getElementById('view-meditation');
+                medView.classList.remove('z-50', 'opacity-100', 'pointer-events-auto'); 
+                medView.classList.add('z-0', 'opacity-0', 'pointer-events-none');
+                document.getElementById('bottom-nav').classList.remove('translate-y-full');
+                switchTab('home'); 
+                seconds = selectedMinutes * 60;
+                updateTimerDisplay();
+                
+                if(completed) {
+                    const today = new Date().toDateString();
+                    userData.totalTime += selectedMinutes;
+                    if(userData.lastDate !== today) { 
+                        userData.streak += 1; 
+                        userData.lastDate = today; 
+                    }
+                    userData.history.push({ 
+                        preset: currentPresetIndex, 
+                        duration: selectedMinutes, 
+                        hour: new Date().getHours() 
+                    });
+                    saveUserData(); 
+                    updateJourneyUI();
+                    showAlert(getI18nStr('finishMsg'));
+                }
+            } finally {
+                setTimeout(() => { isProcessingAction = false; }, 500);
             }
-            
-            const medView = document.getElementById('view-meditation');
-            medView.classList.remove('z-50', 'opacity-100', 'pointer-events-auto'); medView.classList.add('z-0', 'opacity-0', 'pointer-events-none');
-            document.getElementById('bottom-nav').classList.remove('translate-y-full');
-            switchTab('home'); seconds = selectedMinutes * 60;
-            
-            if(completed) {
-                const today = new Date().toDateString();
-                userData.totalTime += selectedMinutes;
-                if(userData.lastDate !== today) { userData.streak += 1; userData.lastDate = today; }
-                userData.history.push({ preset: currentPresetIndex, duration: selectedMinutes, hour: new Date().getHours() });
-                saveUserData(); updateJourneyUI();
-                showAlert(getI18nStr('finishMsg'));
-            }
-            
-            setTimeout(() => { isProcessingAction = false; }, 500);
         }
 
-        function updateTimerDisplay() { let m = Math.floor(seconds / 60); let s = seconds % 60; document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' + s : s}`; }
+        function updateTimerDisplay() { 
+            let m = Math.floor(seconds / 60); let s = seconds % 60; 
+            const el = document.getElementById('timer');
+            if (el) el.innerText = `${m}:${s < 10 ? '0' + s : s}`; 
+        }
+
         function scheduleRandomChime() {
             if(!isMeditating || currentBell === 'none' || !bells[currentBell]) return; 
+            clearTimeout(randomChimeTimer); // 기존 타이머 보호
             const randomDelay = Math.floor(Math.random() * (240000 - 120000 + 1)) + 120000; 
-            randomChimeTimer = setTimeout(() => { audioAnchor.volume = userData.volAnchor; audioAnchor.currentTime = 0; audioAnchor.play().catch(()=>{}); scheduleRandomChime(); }, randomDelay);
+            randomChimeTimer = setTimeout(() => { 
+                if (!isMeditating) return; // 명상 종료된 경우 울리지 않음
+                audioAnchor.volume = isMuted ? 0 : userData.volAnchor; 
+                audioAnchor.muted = isMuted;
+                audioAnchor.currentTime = 0; 
+                audioAnchor.play().catch(()=>{}); 
+                scheduleRandomChime(); 
+            }, randomDelay);
         }
+
         function startBreathing() {
             const pebble = document.getElementById('breathing-pebble'); const text = document.getElementById('breath-text');
             breathCycle = 0; text.style.opacity = "1";
             const runCycle = () => {
-                if(!isMeditating) return; pebble.style.transform = "scale(1.4)"; pebble.style.backgroundColor = "rgba(255, 255, 255, 0.4)";
+                if(!isMeditating) return; 
+                pebble.style.transform = "scale(1.4)"; 
+                pebble.style.backgroundColor = "rgba(255, 255, 255, 0.4)";
                 if (breathCycle < 3) text.innerText = getI18nStr('breatheIn'); else text.style.opacity = "0";
-                setTimeout(() => { if(!isMeditating) return; pebble.style.transform = "scale(0.85)"; pebble.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
-                    if (breathCycle < 3) text.innerText = getI18nStr('breatheOut'); breathCycle++;
+                setTimeout(() => { 
+                    if(!isMeditating) return; 
+                    pebble.style.transform = "scale(0.85)"; 
+                    pebble.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
+                    if (breathCycle < 3) text.innerText = getI18nStr('breatheOut'); 
+                    breathCycle++;
                 }, 4000);
-            }; runCycle(); breathInterval = setInterval(runCycle, 8000);
+            }; 
+            runCycle(); 
+            breathInterval = setInterval(runCycle, 8000);
         }
 
         function openAllPresetsModal(type) { document.getElementById('all-presets-title').innerText = getI18nStr(type === 'free' ? 'freePresets' : 'premiumPresets'); renderListHTML('modal-presets-grid', type, true); openModal('modal-all-presets'); }
@@ -969,25 +1244,36 @@
             });
         }
 
+        // 분석 - history 비어있을 때 / 0번 프리셋 버그 수정 (v1.6.4)
         function updateAnalysisUI() {
-            if(userData.history.length === 0) {
+            if(!userData.history || userData.history.length === 0) {
                 document.getElementById('analysis-top-preset').innerText = getI18nStr('notEnoughData');
                 document.getElementById('analysis-top-time').innerText = getI18nStr('notEnoughData');
                 return;
             }
-            let presetCounts = {}; let maxPresetId = 0; let maxCount = 0;
+            let presetCounts = {}; 
+            let maxPresetId = -1;  // -1 sentinel
+            let maxCount = 0;
             let timeCounts = { morning:0, afternoon:0, evening:0, night:0 };
             
             userData.history.forEach(session => {
                 presetCounts[session.preset] = (presetCounts[session.preset] || 0) + 1;
-                if(presetCounts[session.preset] > maxCount) { maxCount = presetCounts[session.preset]; maxPresetId = session.preset; }
+                if(presetCounts[session.preset] > maxCount) { 
+                    maxCount = presetCounts[session.preset]; 
+                    maxPresetId = session.preset; 
+                }
                 
                 let h = session.hour;
-                if(h >= 5 && h < 12) timeCounts.morning++; else if (h >= 12 && h < 18) timeCounts.afternoon++; else if (h >= 18 && h < 22) timeCounts.evening++; else timeCounts.night++;
+                if(h >= 5 && h < 12) timeCounts.morning++; 
+                else if (h >= 12 && h < 18) timeCounts.afternoon++; 
+                else if (h >= 18 && h < 22) timeCounts.evening++; 
+                else timeCounts.night++;
             });
 
-            document.getElementById('analysis-top-preset').innerText = appPresets[maxPresetId] ? appPresets[maxPresetId].title : "-";
-            let topTimeKey = Object.keys(timeCounts).reduce((a, b) => timeCounts[a] > timeCounts[b] ? a : b);
+            const topPresetTitle = (maxPresetId >= 0 && appPresets[maxPresetId]) ? appPresets[maxPresetId].title : "-";
+            document.getElementById('analysis-top-preset').innerText = topPresetTitle;
+            
+            let topTimeKey = Object.keys(timeCounts).reduce((a, b) => timeCounts[a] >= timeCounts[b] ? a : b);
             const timeLabels = { morning: 'timeMorning', afternoon: 'timeAfternoon', evening: 'timeEvening', night: 'timeNight' };
             document.getElementById('analysis-top-time').innerText = getI18nStr(timeLabels[topTimeKey]);
         }
