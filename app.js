@@ -67,6 +67,51 @@
                 this.audioB.load();
             }
 
+            // 명상 종료용 페이드아웃 (v1.6.8 신규)
+            // targetVolume / isCrossfading 등 내부 상태 완전 무시하고
+            // 현재 실제 재생 중인 볼륨에서 0까지 직접 ramp-down.
+            // 완료 후 onDone 콜백 실행 (종소리 + 화면 전환은 여기서 트리거)
+            endingFadeOut(durationSec, onDone) {
+                var self = this;
+                // 진행 중인 모든 페이드 중단
+                clearInterval(this.crossfadeInterval);
+                clearInterval(this.externalFadeInterval);
+                this.crossfadeInterval = null;
+                this.externalFadeInterval = null;
+                this.isCrossfading = true; // 자동 루프 크로스페이드 차단
+
+                var startVolA = this.audioA.volume;
+                var startVolB = this.audioB.volume;
+                // 현재 볼륨이 이미 0에 가까우면 즉시 완료
+                if (startVolA < 0.01 && startVolB < 0.01) {
+                    this.stop();
+                    if (onDone) onDone();
+                    return;
+                }
+
+                var steps = Math.round(durationSec * 30); // 30fps 기준
+                var stepTime = (durationSec * 1000) / steps;
+                var currentStep = 0;
+
+                this.externalFadeInterval = setInterval(function() {
+                    currentStep++;
+                    var ratio = 1 - (currentStep / steps);
+                    if (currentStep >= steps || ratio <= 0) {
+                        clearInterval(self.externalFadeInterval);
+                        self.externalFadeInterval = null;
+                        self.audioA.volume = 0;
+                        self.audioB.volume = 0;
+                        self.stop();
+                        if (onDone) onDone();
+                    } else {
+                        if (!self.isMuted) {
+                            self.audioA.volume = startVolA * ratio;
+                            self.audioB.volume = startVolB * ratio;
+                        }
+                    }
+                }, stepTime);
+            }
+
             // 명상 중 음원 변경시 부드러운 전환 (NEW v1.6.4)
             // 기존 active 트랙을 페이드아웃하면서 inactive에 새 src를 페이드인.
             crossfadeToSrc(url, fadeTime) {
@@ -836,18 +881,26 @@
                 audioAmbient.playWithFadeIn(1.5);
                 
                 startBreathing();
+
+                var endingFadeStarted = false; // 마지막 페이드아웃 중복 방지
+                // 페이드 시작 기준: 마지막 15초. 단 총 시간이 20초 미만이면 절반 시점
+                var fadeAtSeconds = (selectedMinutes * 60 >= 20) ? 15 : Math.floor(selectedMinutes * 60 * 0.5);
+
                 meditationTimer = setInterval(() => { 
                     seconds--; 
-                    updateTimerDisplay(); 
+                    updateTimerDisplay();
 
-                    // 마지막 8초에 부드러운 페이드아웃
-                    if (seconds <= 8 && seconds > 0) {
-                        const ratio = seconds / 8;
-                        audioAsmr.setVolume(userData.volAsmr * ratio);
-                        audioAmbient.setVolume(userData.volAmbient * ratio);
+                    // 마지막 fadeAtSeconds에 endingFadeOut 한 번만 실행
+                    if (seconds === fadeAtSeconds && !endingFadeStarted) {
+                        endingFadeStarted = true;
+                        var fadeDuration = fadeAtSeconds - 1; // 1초 여유 (종소리 직전 무음)
+                        audioAsmr.endingFadeOut(fadeDuration, function() {});
+                        audioAmbient.endingFadeOut(fadeDuration, function() {});
                     }
 
-                    if(seconds <= 0) stopMeditation(true); 
+                    if (seconds <= 0) {
+                        stopMeditation(true);
+                    }
                 }, 1000);
                 scheduleRandomChime();
             } finally {
@@ -869,53 +922,74 @@
                 // → 브라우저 뒤로가기 애니메이션 없음, 화면 밀림 없음
                 history.replaceState({ page: 'home_guard' }, "", "");
 
-                // 음원 페이드아웃 후 정지 (자연스러움 향상)
-                // 단, 자동 완료(completed=true)일 때는 이미 8초간 페이드 중이었으므로 즉시 stop
+                // 음원 정리
+                // completed=true: endingFadeOut이 이미 14초에 걸쳐 페이드하고 stop까지 완료.
+                //   혹시 모를 잔여 재생을 위해 한 번 더 stop (무음 상태라 안전)
+                // completed=false(정지버튼): 진행 중인 모든 페이드 취소 후 1.5초 페이드아웃
                 if (completed) {
                     audioAsmr.stop();
                     audioAmbient.stop();
                 } else {
-                    // 사용자 정지 / 뒤로가기 정지 → 1.5초 페이드아웃
                     audioAsmr.fadeOutAndStop(1.5);
                     audioAmbient.fadeOutAndStop(1.5);
                 }
                 
-                // 다음 세션을 위해 볼륨을 원래 값으로 복원
+                // 다음 세션을 위해 targetVolume 즉시 복원 (실제 오디오는 이미 stop됨)
                 audioAsmr.setVolume(userData.volAsmr);
                 audioAmbient.setVolume(userData.volAmbient);
 
-                // 종료 종소리 (None 모드면 울리지 않음)
-                if(currentBell !== 'none' && bells[currentBell]) { 
-                    audioBowl.volume = isMuted ? 0 : userData.volBowl; 
-                    audioBowl.muted = isMuted;
-                    audioBowl.currentTime = 0; 
-                    audioBowl.play().catch(()=>{}); 
-                }
-                
-                const medView = document.getElementById('view-meditation');
-                medView.classList.remove('z-50', 'opacity-100', 'pointer-events-auto'); 
-                medView.classList.add('z-0', 'opacity-0', 'pointer-events-none');
-                document.getElementById('bottom-nav').classList.remove('translate-y-full');
-                document.getElementById('app-container').classList.remove('nav-hidden');
-                switchTab('home'); 
-                seconds = selectedMinutes * 60;
-                updateTimerDisplay();
-                
-                if(completed) {
-                    const today = new Date().toDateString();
-                    userData.totalTime += selectedMinutes;
-                    if(userData.lastDate !== today) { 
-                        userData.streak += 1; 
-                        userData.lastDate = today; 
+                if (completed) {
+                    // 자동 완료: 음원은 endingFadeOut으로 이미 소멸
+                    // 종소리 → 1.5초 여운 후 화면 전환 (종소리가 끝날 시간 확보)
+                    if(currentBell !== 'none' && bells[currentBell]) {
+                        audioBowl.volume = isMuted ? 0 : userData.volBowl;
+                        audioBowl.muted = isMuted;
+                        audioBowl.currentTime = 0;
+                        audioBowl.play().catch(()=>{});
                     }
-                    userData.history.push({ 
-                        preset: currentPresetIndex, 
-                        duration: selectedMinutes, 
-                        hour: new Date().getHours() 
-                    });
-                    saveUserData(); 
-                    updateJourneyUI();
-                    showAlert(getI18nStr('finishMsg'));
+                    // 종소리가 울리는 동안 명상 화면 유지, 1.5초 후 전환
+                    setTimeout(() => {
+                        const medView = document.getElementById('view-meditation');
+                        medView.classList.remove('z-50', 'opacity-100', 'pointer-events-auto');
+                        medView.classList.add('z-0', 'opacity-0', 'pointer-events-none');
+                        document.getElementById('bottom-nav').classList.remove('translate-y-full');
+                        document.getElementById('app-container').classList.remove('nav-hidden');
+                        switchTab('home');
+                        seconds = selectedMinutes * 60;
+                        updateTimerDisplay();
+
+                        const today = new Date().toDateString();
+                        userData.totalTime += selectedMinutes;
+                        if(userData.lastDate !== today) {
+                            userData.streak += 1;
+                            userData.lastDate = today;
+                        }
+                        userData.history.push({
+                            preset: currentPresetIndex,
+                            duration: selectedMinutes,
+                            hour: new Date().getHours()
+                        });
+                        saveUserData();
+                        updateJourneyUI();
+                        showAlert(getI18nStr('finishMsg'));
+                    }, 1500);
+
+                } else {
+                    // 사용자 정지: 바로 화면 전환
+                    if(currentBell !== 'none' && bells[currentBell]) {
+                        audioBowl.volume = isMuted ? 0 : userData.volBowl;
+                        audioBowl.muted = isMuted;
+                        audioBowl.currentTime = 0;
+                        audioBowl.play().catch(()=>{});
+                    }
+                    const medView = document.getElementById('view-meditation');
+                    medView.classList.remove('z-50', 'opacity-100', 'pointer-events-auto');
+                    medView.classList.add('z-0', 'opacity-0', 'pointer-events-none');
+                    document.getElementById('bottom-nav').classList.remove('translate-y-full');
+                    document.getElementById('app-container').classList.remove('nav-hidden');
+                    switchTab('home');
+                    seconds = selectedMinutes * 60;
+                    updateTimerDisplay();
                 }
             } finally {
                 setTimeout(() => { isProcessingAction = false; }, 500);
