@@ -344,7 +344,7 @@
                 paywallDesc: "모든 프리미엄 사운드와 커스텀 기능을<br>잠금 해제하고 더 깊은 휴식을 경험하세요.", meditationBackBlocked: "명상 중에는 화면의 버튼으로 종료하세요.",
                 payYearly: "연간 구독", payYearlyPrice: "월 $4.99 / 연 $59.99", payTrial: "7일 무료", payMonthly: "월간 구독", payMonthlyPrice: "$9.99 / 월", payStart: "무료 체험 시작하기",
                 paywallDemoAlert: "결제 시스템 데모입니다.", finishMsg: "수고하셨습니다. 명상 세션이 완료되었습니다.", restoreMsgLoading: "구매 내역을 확인 중입니다...", restoreMsgSuccess: "구매 복원이 완료되었습니다.", breatheIn: "숨을 들이마십니다", breatheOut: "천천히 내뱉습니다",
-                resetData: "여정 데이터 초기화", resetConfirmMsg: "모든 명상 기록과 통계가 삭제됩니다. 정말 초기화하시겠습니까?", resetDoneMsg: "모든 여정 데이터가 초기화되었습니다.", analysisTitle: "여정 분석", mostUsedSound: "가장 자주 머문 무드", favoriteTime: "가장 선호하는 시간대", timeMorning: "아침 (5AM - 12PM)", timeAfternoon: "오후 (12PM - 6PM)", timeEvening: "저녁 (6PM - 10PM)", timeNight: "밤 (10PM - 5AM)", notEnoughData: "데이터 부족"
+                resetData: "여정 데이터 초기화", resetConfirmMsg: "모든 명상 기록과 통계가 삭제됩니다. 정말 초기화하시겠습니까?", resetDoneMsg: "모든 여정 데이터가 초기화되었습니다.", analysisTitle: "여정 분석", mostUsedSound: "가장 자주 머문 무드", favoriteTime: "가장 선호하는 시간대", timeMorning: "아침 (5AM - 12PM)", timeAfternoon: "오후 (12PM - 6PM)", timeEvening: "저녁 (6PM - 10PM)", timeNight: "밤 (10PM - 5AM)", notEnoughData: "데이터 부족", favoritesTitle: "즐겨찾기", mixerReset: "리셋"
             },
             en: {
                 greetingMorning: "Good Morning", greetingAfternoon: "Good Afternoon", greetingEvening: "Good Evening", greetingNight: "Good Night",
@@ -359,7 +359,7 @@
                 languageSettingsTitle: "Select Language", bellModalTitle: "Bell Library", bellNone: "None", bellTibetan: "Tibetan Bowl", bellCrystal: "Crystal Bowl", bellGong: "Deep Gong",
                 paywallDesc: "Unlock all premium sounds and custom features<br>to experience deeper relaxation.", meditationBackBlocked: "Use the stop button to end meditation.", payYearly: "Yearly", payYearlyPrice: "$4.99 / mo (Billed $59.99/yr)", payTrial: "7 Days Free", payMonthly: "Monthly", payMonthlyPrice: "$9.99 / mo", payStart: "Start Free Trial",
                 paywallDemoAlert: "Payment gateway demo.", finishMsg: "Great job. Your meditation session is complete.", restoreMsgLoading: "Checking store purchases...", restoreMsgSuccess: "Purchase successfully restored.", breatheIn: "Breathe in", breatheOut: "Breathe out slowly",
-                resetData: "Reset Journey Data", resetConfirmMsg: "All meditation history will be deleted. Are you sure?", resetDoneMsg: "Journey data has been reset.", analysisTitle: "Journey Analysis", mostUsedSound: "Most Visited Mood", favoriteTime: "Favorite Time of Day", timeMorning: "Morning", timeAfternoon: "Afternoon", timeEvening: "Evening", timeNight: "Night", notEnoughData: "Not enough data"
+                resetData: "Reset Journey Data", resetConfirmMsg: "All meditation history will be deleted. Are you sure?", resetDoneMsg: "Journey data has been reset.", analysisTitle: "Journey Analysis", mostUsedSound: "Most Visited Mood", favoriteTime: "Favorite Time of Day", timeMorning: "Morning", timeAfternoon: "Afternoon", timeEvening: "Evening", timeNight: "Night", notEnoughData: "Not enough data", favoritesTitle: "Favorites", mixerReset: "Reset"
             },
             es: {
                 greetingMorning: "Buenos días", greetingAfternoon: "Buenas tardes", greetingEvening: "Buenas tardes", greetingNight: "Buenas noches",
@@ -370,7 +370,7 @@
                 navHome: "Inicio", navLibrary: "Biblioteca", navJourney: "Viaje", customTimeTitle: "Tiempo", confirm: "Confirmar", cancelBtn: "Cancelar", alertTitle: "Aviso",
                 languageSettingsTitle: "Seleccionar Idioma", bellModalTitle: "Campanas", bellNone: "Ninguna", bellTibetan: "Cuenco Tibetano", bellCrystal: "Cuenco de Cristal", bellGong: "Gong Profundo",
                 paywallDesc: "Desbloquea todos los sonidos premium y funciones<br>para experimentar una relajación más profunda.", meditationBackBlocked: "Usa el botón de parar para terminar.", payYearly: "Anual", payYearlyPrice: "$4.99/mes ($59.99/año)", payTrial: "7 Días Gratis", payMonthly: "Mensual", payMonthlyPrice: "$9.99 / mes", payStart: "Empezar Prueba",
-                paywallDemoAlert: "Demostración de pago.", finishMsg: "Excelente trabajo. Tu sesión ha terminado.", restoreMsgLoading: "Buscando...", restoreMsgSuccess: "Compra restaurada.", breatheIn: "Inhala", breatheOut: "Exhala", resetData: "Reiniciar Datos", resetConfirmMsg: "Todo el historial será eliminado. ¿Estás seguro?", resetDoneMsg: "Los datos han sido reiniciados.", analysisTitle: "Análisis del Viaje", mostUsedSound: "Sonido Favorito", favoriteTime: "Momento Favorito", timeMorning: "Mañana", timeAfternoon: "Tarde", timeEvening: "Tarde/Noche", timeNight: "Noche", notEnoughData: "Sin datos"
+                paywallDemoAlert: "Demostración de pago.", finishMsg: "Excelente trabajo. Tu sesión ha terminado.", restoreMsgLoading: "Buscando...", restoreMsgSuccess: "Compra restaurada.", breatheIn: "Inhala", breatheOut: "Exhala", resetData: "Reiniciar Datos", resetConfirmMsg: "Todo el historial será eliminado. ¿Estás seguro?", resetDoneMsg: "Los datos han sido reiniciados.", analysisTitle: "Análisis del Viaje", mostUsedSound: "Sonido Favorito", favoriteTime: "Momento Favorito", timeMorning: "Mañana", timeAfternoon: "Tarde", timeEvening: "Tarde/Noche", timeNight: "Noche", notEnoughData: "Sin datos", favoritesTitle: "Favoritos", mixerReset: "Restablecer"
             },
             zh: {
                 greetingMorning: "早上好", greetingAfternoon: "下午好", greetingEvening: "晚上好", greetingNight: "晚安",
@@ -378,7 +378,7 @@
                 journeyTitle: "您的旅程", totalTimeLabel: "总时长", minuteUnit: "分钟", streakLabel: "连续打卡", dayUnit: "天", settingsMeditationTitle: "冥想设置", languageSettings: "语言", bellSettings: "冥想铃声", dndMode: "勿扰模式", dndDesc: "冥想时静音通知 (即将推出)", themeSettings: "主题", themeModalTitle: "选择主题", themeLight: "浅色模式", themeDark: "深色模式", themeAuto: "自动",
                 settingsSubTitle: "订阅与账户", subPlan: "您的计划", subStatusFree: "免费基础计划", upgrade: "升级", restorePurchase: "恢复购买", navHome: "首页", navLibrary: "音频库", navJourney: "旅程", customTimeTitle: "自定义时间", confirm: "确认", cancelBtn: "取消", alertTitle: "提示",
                 languageSettingsTitle: "选择语言", bellModalTitle: "铃声库", bellNone: "无", bellTibetan: "西藏颂钵", bellCrystal: "水晶钵", bellGong: "深沉铜锣", paywallDesc: "解锁所有高级声音和自定义功能，<br>体验更深层次的放松。", meditationBackBlocked: "请使用停止按钮结束冥想。", payYearly: "年度订阅", payYearlyPrice: "每月 $4.99 / 每年 $59.99", payTrial: "免费试用", payMonthly: "月度订阅", payMonthlyPrice: "$9.99 / 月", payStart: "开始免费试用",
-                paywallDemoAlert: "支付系统演示。", finishMsg: "辛苦了。您的冥想环节已完成。", restoreMsgLoading: "正在检查...", restoreMsgSuccess: "恢复成功。", breatheIn: "吸气", breatheOut: "呼气", resetData: "重置数据", resetConfirmMsg: "所有历史记录将被删除。确定吗？", resetDoneMsg: "数据已重置。", analysisTitle: "旅程分析", mostUsedSound: "最常用的声音", favoriteTime: "首选时间", timeMorning: "早晨", timeAfternoon: "下午", timeEvening: "傍晚", timeNight: "夜晚", notEnoughData: "数据不足"
+                paywallDemoAlert: "支付系统演示。", finishMsg: "辛苦了。您的冥想环节已完成。", restoreMsgLoading: "正在检查...", restoreMsgSuccess: "恢复成功。", breatheIn: "吸气", breatheOut: "呼气", resetData: "重置数据", resetConfirmMsg: "所有历史记录将被删除。确定吗？", resetDoneMsg: "数据已重置。", analysisTitle: "旅程分析", mostUsedSound: "最常用的声音", favoriteTime: "首选时间", timeMorning: "早晨", timeAfternoon: "下午", timeEvening: "傍晚", timeNight: "夜晚", notEnoughData: "数据不足", favoritesTitle: "收藏", mixerReset: "重置"
             },
             ja: {
                 greetingMorning: "おはようございます", greetingAfternoon: "こんにちは", greetingEvening: "こんばんは", greetingNight: "おやすみなさい",
@@ -386,7 +386,7 @@
                 journeyTitle: "記録", totalTimeLabel: "合計時間", minuteUnit: "分", streakLabel: "連続記録", dayUnit: "日", settingsMeditationTitle: "設定", languageSettings: "言語", bellSettings: "鐘", dndMode: "おやすみモード", dndDesc: "瞑想中の通知をミュート (予定)", themeSettings: "テーマ", themeModalTitle: "テーマ", themeLight: "ライト", themeDark: "ダーク", themeAuto: "自動",
                 settingsSubTitle: "アカウント", subPlan: "プラン", subStatusFree: "無料プラン", upgrade: "アップグレード", restorePurchase: "購入の復元", navHome: "ホーム", navLibrary: "ライブラリ", navJourney: "記録", customTimeTitle: "時間", confirm: "確認", cancelBtn: "キャンセル", alertTitle: "お知らせ",
                 languageSettingsTitle: "言語", bellModalTitle: "鐘", bellNone: "なし", bellTibetan: "チベットボウル", bellCrystal: "クリスタルボウル", bellGong: "ゴング", paywallDesc: "すべての機能をロック解除して、<br>より深いリラクゼーションを。", meditationBackBlocked: "停止ボタンで瞑想を終了してください。", payYearly: "年間", payYearlyPrice: "月額 $4.99 / 年額 $59.99", payTrial: "7日間無料", payMonthly: "月間", payMonthlyPrice: "$9.99 / 月", payStart: "無料トライアル",
-                paywallDemoAlert: "デモです。", finishMsg: "お疲れ様でした。", restoreMsgLoading: "確認中...", restoreMsgSuccess: "復元しました。", breatheIn: "息を吸って", breatheOut: "息を吐いて", resetData: "データ初期化", resetConfirmMsg: "全ての記録が削除されます。よろしいですか？", resetDoneMsg: "初期化されました。", analysisTitle: "記録分析", mostUsedSound: "よく聴くサウンド", favoriteTime: "よく瞑想する時間帯", timeMorning: "朝", timeAfternoon: "昼", timeEvening: "夕方", timeNight: "夜", notEnoughData: "データなし"
+                paywallDemoAlert: "デモです。", finishMsg: "お疲れ様でした。", restoreMsgLoading: "確認中...", restoreMsgSuccess: "復元しました。", breatheIn: "息を吸って", breatheOut: "息を吐いて", resetData: "データ初期化", resetConfirmMsg: "全ての記録が削除されます。よろしいですか？", resetDoneMsg: "初期化されました。", analysisTitle: "記録分析", mostUsedSound: "よく聴くサウンド", favoriteTime: "よく瞑想する時間帯", timeMorning: "朝", timeAfternoon: "昼", timeEvening: "夕方", timeNight: "夜", notEnoughData: "データなし", favoritesTitle: "お気に入り", mixerReset: "リセット"
             }
         };
 
@@ -408,7 +408,7 @@
             lang: null, theme: 'auto', bell: 'tibetan', presetIndex: 0,
             totalTime: 0, streak: 0, lastDate: null, history: [],
             volAsmr: 0.7, volAmbient: 0.3, volBowl: 0.5, volAnchor: 0.3,
-            dndMode: false
+            dndMode: false, favorites: []
         };
 
         let currentLang = 'en'; 
@@ -482,6 +482,8 @@
                     console.warn('userData parse failed, using defaults');
                 }
             }
+            // favorites가 없는 구버전 데이터 대비
+            if (!Array.isArray(userData.favorites)) userData.favorites = [];
             if(userData.lang) currentLang = userData.lang;
             if(userData.theme) currentThemeSetting = userData.theme;
         }
@@ -700,8 +702,36 @@
         }
 
         function renderLists() {
+            renderFavorites();
             renderListHTML('free-presets-container', 'free', false);
             renderListHTML('premium-presets-container', 'premium', false);
+        }
+
+        function renderFavorites() {
+            var favs = userData.favorites || [];
+            var section = document.getElementById('favorites-section');
+            var container = document.getElementById('favorites-container');
+            if (!section || !container) return;
+            if (favs.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            section.classList.remove('hidden');
+            var html = '';
+            favs.forEach(function(index) {
+                var p = appPresets[index];
+                if (!p) return;
+                var isLock = p.type === 'premium' && !isSubscribed;
+                var action = isLock ? 'openPaywall()' : 'changeMood(' + index + ')';
+                html += '<div onclick="' + action + '" class="w-36 aspect-square shrink-0 snap-start rounded-2xl overflow-hidden relative shadow-md cursor-pointer active:scale-95 transition-transform">'
+                    + '<img class="absolute inset-0 w-full h-full object-cover" src="' + p.img + '"/>'
+                    + '<button onclick="event.stopPropagation(); toggleFavorite(' + index + ')" class="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-full w-7 h-7 flex items-center justify-center active:scale-90 transition-transform z-10">'
+                    + '<span class="material-symbols-outlined text-[15px] text-red-400" style="font-variation-settings:\'FILL\' 1;">favorite</span>'
+                    + '</button>'
+                    + '<div class="absolute bottom-0 w-full p-2 bg-gradient-to-t from-black/80 to-transparent"><h4 class="text-white text-sm font-serif">' + p.title + '</h4></div>'
+                    + '</div>';
+            });
+            container.innerHTML = html;
         }
 
         function renderListHTML(containerId, filterType, isGrid) {
@@ -716,13 +746,68 @@
                 const lockIcon = isLock ? `<div class="absolute top-2 right-2 bg-black/50 rounded-full p-1"><span class="material-symbols-outlined text-[14px] text-white">lock</span></div>` : '';
                 const baseClass = isGrid ? `w-full aspect-square rounded-2xl` : `w-36 aspect-square shrink-0 snap-start rounded-2xl`;
                 
+                // 즐겨찾기 상태에 따라 하트 색상/채움 변경
+                const isFav = (userData.favorites || []).includes(index);
+                const heartFill = isFav ? '1' : '0';
+                const heartColor = isFav ? 'text-red-400' : 'text-white/80';
+                // 잠긴 프리셋에는 하트 안 보임 (잠금 아이콘과 위치 겹침 방지)
+                const heartBtn = isLock ? '' : `<button onclick="event.stopPropagation(); toggleFavorite(${index})" class="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-full w-7 h-7 flex items-center justify-center active:scale-90 transition-transform z-10"><span class="material-symbols-outlined text-[15px] ${heartColor}" style="font-variation-settings:'FILL' ${heartFill};">favorite</span></button>`;
+
                 html += `<div onclick="${action}; ${isGrid ? "closeModal('modal-all-presets');" : ""}" class="${baseClass} overflow-hidden relative shadow-md cursor-pointer active:scale-95 transition-transform ${opacityClass}">
                     <img class="absolute inset-0 w-full h-full object-cover" src="${p.img}"/>
                     ${lockIcon}
+                    ${heartBtn}
                     <div class="absolute bottom-0 w-full p-2 bg-gradient-to-t from-black/80 to-transparent"><h4 class="text-white text-sm font-serif">${p.title}</h4></div>
                 </div>`;
             });
             container.innerHTML = html;
+        }
+
+        function toggleFavorite(index) {
+            if (!userData.favorites) userData.favorites = [];
+            var i = userData.favorites.indexOf(index);
+            if (i > -1) {
+                // 즐겨찾기 해제
+                userData.favorites.splice(i, 1);
+            } else {
+                // 즐겨찾기 추가
+                userData.favorites.push(index);
+            }
+            saveUserData();
+            renderLists(); // 하트 상태 + 즐겨찾기 섹션 즉시 갱신
+        }
+
+        // 기본 믹서 볼륨값
+        var MIXER_DEFAULTS = { volAsmr: 0.7, volAmbient: 0.3, volBowl: 0.5, volAnchor: 0.3 };
+
+        function resetMixer() {
+            userData.volAsmr    = MIXER_DEFAULTS.volAsmr;
+            userData.volAmbient = MIXER_DEFAULTS.volAmbient;
+            userData.volBowl    = MIXER_DEFAULTS.volBowl;
+            userData.volAnchor  = MIXER_DEFAULTS.volAnchor;
+            saveUserData();
+
+            // 슬라이더 UI 업데이트
+            var sliders = [
+                { id: 'slider-asmr',    labelId: 'label-asmr-vol',    val: MIXER_DEFAULTS.volAsmr },
+                { id: 'slider-ambient', labelId: 'label-ambient-vol',  val: MIXER_DEFAULTS.volAmbient },
+                { id: 'slider-bowl',    labelId: 'label-bowl-vol',     val: MIXER_DEFAULTS.volBowl },
+                { id: 'slider-anchor',  labelId: 'label-anchor-vol',   val: MIXER_DEFAULTS.volAnchor }
+            ];
+            sliders.forEach(function(s) {
+                var el = document.getElementById(s.id);
+                var lb = document.getElementById(s.labelId);
+                if (el) el.value = Math.round(s.val * 100);
+                if (lb) lb.innerText = Math.round(s.val * 100) + '%';
+            });
+
+            // 실제 오디오에 즉시 반영
+            audioAsmr.setVolume(MIXER_DEFAULTS.volAsmr);
+            audioAmbient.setVolume(MIXER_DEFAULTS.volAmbient);
+            if (!isMuted) {
+                audioBowl.volume   = MIXER_DEFAULTS.volBowl;
+                audioAnchor.volume = MIXER_DEFAULTS.volAnchor;
+            }
         }
 
         function switchTab(tabId) {
