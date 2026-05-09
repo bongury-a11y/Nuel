@@ -518,6 +518,11 @@
             if(activeModals.length > 0) {
                 const modalId = activeModals.pop();
                 hideModalDOM(modalId);
+                // 모든 모달이 닫혔을 때 탭바 복원
+                if (activeModals.length === 0) {
+                    const nav = document.getElementById('bottom-nav');
+                    if (nav) nav.classList.remove('modal-open');
+                }
                 const guardState = isMeditating
                     ? { page: 'meditation_guard' }
                     : { page: 'home_guard' };
@@ -556,9 +561,14 @@
                 modal.classList.add('modal-active');
             }, 10);
             activeModals.push(modalId);
-            // 이 모달 entry를 history에 추가 (뒤로가기로 닫을 수 있도록)
             history.pushState({ modalId: modalId }, "", "");
             if(modalId === 'modal-analysis') updateAnalysisUI();
+
+            // 첫 번째 모달이 열릴 때 탭바 숨김
+            if (activeModals.length === 1) {
+                const nav = document.getElementById('bottom-nav');
+                if (nav) nav.classList.add('modal-open');
+            }
         }
 
         // 백드롭(overlay 자체) 클릭만 닫기
@@ -575,10 +585,12 @@
             }
             hideModalDOM(modalId);
 
-            // history.back() 을 호출하지 않고 현재 entry를 guard로 덮어씀.
-            // 이렇게 하면 브라우저가 "뒤로 이동" 애니메이션을 실행하지 않아
-            // 화면 밀림/깜박임이 발생하지 않는다.
-            // 스택에서 modal entry가 남아있지만 다음 popstate에서 guard로 흡수됨.
+            // 모든 모달이 닫혔을 때만 탭바 복원
+            if (activeModals.length === 0) {
+                const nav = document.getElementById('bottom-nav');
+                if (nav) nav.classList.remove('modal-open');
+            }
+
             const guardState = isMeditating
                 ? { page: 'meditation_guard' }
                 : { page: 'home_guard' };
