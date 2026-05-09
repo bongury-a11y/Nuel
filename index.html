@@ -221,7 +221,8 @@
                     <h2 class="text-2xl font-serif text-primary font-bold" data-i18n="analysisTitle">여정 분석</h2>
                     <button onclick="closeModal('modal-analysis')" class="text-tertiary bg-outline-variant/20 rounded-full p-1"><span class="material-symbols-outlined">close</span></button>
                 </div>
-                <div class="flex flex-col gap-4">
+                <!-- 통계 카드 2개 -->
+                <div class="flex flex-col gap-4 mb-6 shrink-0">
                     <div class="bg-glass-bg border border-glass-border rounded-2xl p-5 flex items-center gap-4">
                         <div class="w-12 h-12 rounded-full bg-primary/10 flex justify-center items-center shrink-0">
                             <span class="material-symbols-outlined text-primary text-2xl">favorite</span>
@@ -241,6 +242,12 @@
                         </div>
                     </div>
                 </div>
+                <!-- 히스토리 로그 -->
+                <div class="shrink-0 mb-3 flex justify-between items-center">
+                    <h3 class="text-sm font-sans font-bold text-tertiary" data-i18n="historyTitle">명상 기록</h3>
+                    <span id="analysis-history-count" class="text-xs text-tertiary opacity-60"></span>
+                </div>
+                <div id="analysis-history-list" class="overflow-y-auto no-scrollbar flex flex-col gap-2 pb-2"></div>
             </div>
         </div>
 
