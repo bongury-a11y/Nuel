@@ -62,9 +62,10 @@
                 this.src = url;
                 this.stop();
                 this.audioA.src = url;
-                this.audioB.src = url;
                 this.audioA.load();
-                this.audioB.load();
+                // audioB는 실제 크로스페이드 직전에 로드 (모바일 동시 로드 부하 방지)
+                // src만 세팅해두고 load()는 doCrossfade에서 호출
+                this.audioB.src = url;
             }
 
             // 명상 종료용 페이드아웃 (v1.6.8 신규)
@@ -167,7 +168,7 @@
                 }, stepTime);
             }
 
-            // 외부에서 시작 페이드인 요청 (NEW v1.6.4) - 시작 종소리가 묻히지 않게
+            // 외부에서 시작 페이드인 요청 - 시작 종소리가 묻히지 않게
             playWithFadeIn(fadeTime) {
                 if (!fadeTime) fadeTime = 1.5;
                 this.isPlaying = true;
@@ -185,10 +186,12 @@
                     currentStep++;
                     if (currentStep >= steps) {
                         clearInterval(self.externalFadeInterval);
-                        self.externalFadeInterval = null; // ← 반드시 null로 초기화
-                        if (!self.isCrossfading && !self.isMuted) self.active.volume = self.targetVolume;
+                        self.externalFadeInterval = null;
+                        // isCrossfading 체크 없이 항상 targetVolume 적용
+                        if (!self.isMuted) self.active.volume = self.targetVolume;
                     } else {
-                        if (!self.isCrossfading && !self.isMuted) {
+                        // isCrossfading 체크 없이 항상 볼륨 업데이트
+                        if (!self.isMuted) {
                             self.active.volume = Math.min(endVol, (endVol * currentStep) / steps);
                         }
                     }
@@ -279,10 +282,17 @@
             }
 
             unlock() {
+                // play()는 Promise 반환 — then() 후 pause해야 진짜 unlock됨
+                var self = this;
                 if(this.src) {
-                    var self = this;
-                    this.audioA.play().catch(function(){}); this.audioA.pause(); this.audioA.currentTime = 0;
-                    this.audioB.play().catch(function(){}); this.audioB.pause(); this.audioB.currentTime = 0;
+                    this.audioA.play().then(function(){ 
+                        self.audioA.pause(); 
+                        self.audioA.currentTime = 0; 
+                    }).catch(function(){});
+                    this.audioB.play().then(function(){ 
+                        self.audioB.pause(); 
+                        self.audioB.currentTime = 0; 
+                    }).catch(function(){});
                 }
             }
 
@@ -295,6 +305,8 @@
 
                 fadingIn.currentTime = 0;
                 fadingIn.volume = 0;
+                // 지연 로드: 크로스페이드 시작 시점에 load 후 play
+                fadingIn.load();
                 fadingIn.play().catch(function(){});
 
                 var steps = 25; 
@@ -907,20 +919,43 @@
             document.getElementById('icon-mute').innerText = isMuted ? 'volume_off' : 'volume_up';
         }
 
-        function unlockAudio() {
-            if(audioUnlocked) return;
-            
-            audioAsmr.unlock();
-            audioAmbient.unlock();
-            
-            // bowl/anchor도 무음으로 한 번 깨워둔다
-            audioAnchor.muted = true;
-            audioAnchor.play().then(() => { 
-                audioAnchor.pause(); 
-                audioAnchor.muted = false; 
-            }).catch(()=>{});
-            
-            audioUnlocked = true;
+        function unlockAudio(onDone) {
+            if(audioUnlocked) {
+                if(onDone) onDone();
+                return;
+            }
+
+            // 모든 오디오 요소를 무음으로 play → then(pause) 순서로 진짜 unlock
+            // Promise.all로 전부 완료된 뒤 onDone 콜백 실행
+            var silentPlay = function(audioEl) {
+                var prev = audioEl.muted;
+                audioEl.muted = true;
+                return audioEl.play().then(function() {
+                    audioEl.pause();
+                    audioEl.currentTime = 0;
+                    audioEl.muted = prev;
+                }).catch(function() {
+                    audioEl.muted = prev;
+                });
+            };
+
+            var promises = [
+                silentPlay(audioAsmr.audioA),
+                silentPlay(audioAsmr.audioB),
+                silentPlay(audioAmbient.audioA),
+                silentPlay(audioAmbient.audioB),
+                silentPlay(audioBowl),
+                silentPlay(audioAnchor)
+            ];
+
+            Promise.all(promises).then(function() {
+                audioUnlocked = true;
+                if(onDone) onDone();
+            }).catch(function() {
+                // 일부 실패해도 진행 (구형 브라우저 대비)
+                audioUnlocked = true;
+                if(onDone) onDone();
+            });
         }
 
         // ==========================================
@@ -931,10 +966,7 @@
             isProcessingAction = true;
             
             try {
-                // 명상 화면을 history에 push (home_guard 위에 쌓임)
                 history.pushState({ page: 'meditation' }, "", "");
-
-                unlockAudio(); 
                 isMeditating = true;
 
                 ['home', 'player', 'journey'].forEach(t => { 
@@ -949,45 +981,49 @@
                 medView.classList.add('z-50', 'opacity-100', 'pointer-events-auto');
 
                 seconds = selectedMinutes * 60;
-                updateTimerDisplay(); 
-
-                // 시작 종소리를 먼저 울리고 ASMR/Ambient는 페이드인
-                if(currentBell !== 'none' && bells[currentBell]) { 
-                    audioBowl.volume = isMuted ? 0 : userData.volBowl;
-                    audioBowl.muted = isMuted;
-                    audioBowl.currentTime = 0; 
-                    audioBowl.play().catch(()=>{}); 
-                }
-                
-                // 사운드 페이드인 (1.5초) - 종소리가 묻히지 않게
-                audioAsmr.setVolume(userData.volAsmr);
-                audioAmbient.setVolume(userData.volAmbient);
-                audioAsmr.playWithFadeIn(1.5);
-                audioAmbient.playWithFadeIn(1.5);
-                
+                updateTimerDisplay();
                 startBreathing();
 
-                var endingFadeStarted = false; // 마지막 페이드아웃 중복 방지
-                // 페이드 시작 기준: 마지막 15초. 단 총 시간이 20초 미만이면 절반 시점
-                var fadeAtSeconds = (selectedMinutes * 60 >= 20) ? 15 : Math.floor(selectedMinutes * 60 * 0.5);
+                // unlock 완료 후에 실제 오디오 시작 (랜덤 미재생 버그 핵심 수정)
+                unlockAudio(function() {
+                    if (!isMeditating) return; // unlock 도중 취소된 경우
 
-                meditationTimer = setInterval(() => { 
-                    seconds--; 
-                    updateTimerDisplay();
-
-                    // 마지막 fadeAtSeconds에 endingFadeOut 한 번만 실행
-                    if (seconds === fadeAtSeconds && !endingFadeStarted) {
-                        endingFadeStarted = true;
-                        var fadeDuration = fadeAtSeconds - 1; // 1초 여유 (종소리 직전 무음)
-                        audioAsmr.endingFadeOut(fadeDuration, function() {});
-                        audioAmbient.endingFadeOut(fadeDuration, function() {});
+                    // 시작 종소리
+                    if(currentBell !== 'none' && bells[currentBell]) { 
+                        audioBowl.volume = isMuted ? 0 : userData.volBowl;
+                        audioBowl.muted = isMuted;
+                        audioBowl.currentTime = 0; 
+                        audioBowl.play().catch(()=>{}); 
                     }
+                    
+                    // ASMR/Ambient 페이드인 (1.5초) — 종소리가 묻히지 않게
+                    audioAsmr.setVolume(userData.volAsmr);
+                    audioAmbient.setVolume(userData.volAmbient);
+                    audioAsmr.playWithFadeIn(1.5);
+                    audioAmbient.playWithFadeIn(1.5);
 
-                    if (seconds <= 0) {
-                        stopMeditation(true);
-                    }
-                }, 1000);
-                scheduleRandomChime();
+                    // 타이머 시작
+                    var endingFadeStarted = false;
+                    var fadeAtSeconds = (selectedMinutes * 60 >= 20) ? 15 : Math.floor(selectedMinutes * 60 * 0.5);
+
+                    meditationTimer = setInterval(() => { 
+                        seconds--; 
+                        updateTimerDisplay();
+
+                        if (seconds === fadeAtSeconds && !endingFadeStarted) {
+                            endingFadeStarted = true;
+                            var fadeDuration = fadeAtSeconds - 1;
+                            audioAsmr.endingFadeOut(fadeDuration, function() {});
+                            audioAmbient.endingFadeOut(fadeDuration, function() {});
+                        }
+
+                        if (seconds <= 0) {
+                            stopMeditation(true);
+                        }
+                    }, 1000);
+                    scheduleRandomChime();
+                });
+
             } finally {
                 setTimeout(() => { isProcessingAction = false; }, 500);
             }
@@ -1238,8 +1274,8 @@
                     +   '<p class="text-sm font-sans font-bold text-primary truncate">' + presetTitle + '</p>'
                     +   '<p class="text-xs text-tertiary opacity-70 mt-0.5">' + dateStr + ' · ' + timeLabel + '</p>'
                     + '</div>'
-                    // 시간 뱃지
-                    + '<span class="text-xs font-bold text-primary/80 bg-primary/10 px-2 py-1 rounded-full shrink-0">'
+                    // 시간 뱃지 (다크모드 대응 - 인라인 CSS 변수 직접 사용)
+                    + '<span class="text-xs font-bold px-2 py-1 rounded-full shrink-0" style="color:var(--primary-color);background:rgba(var(--primary-rgb,59,72,51),0.12);">'
                     +   duration + getI18nStr('minuteUnit')
                     + '</span>'
                     + '</div>';
