@@ -16,38 +16,51 @@
         .breathing-pebble { border-radius: 45% 55% 50% 50% / 50% 45% 55% 50%; transition: transform 4s ease-in-out, background-color 4s ease-in-out; }
         ::-webkit-scrollbar { display: none; } * { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* ── 탭바: 모달과 동일한 상단 둥글기, 반투명 유리 효과 ── */
+        /* ── 탭바 ── */
         #bottom-nav {
-            /* 상단 양끝 모달과 동일하게 */
             border-radius: 2.5rem 2.5rem 0 0 !important;
-            /* 반투명 유리 — surface 색에 투명도 추가 */
-            background: rgba(var(--surface-rgb, 250, 249, 246), 0.55) !important;
+            background: rgba(250, 249, 246, 0.55) !important;
             backdrop-filter: blur(24px) saturate(180%) !important;
             -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-            /* 얇은 상단 테두리 대신 유리 테두리 */
             border: 1px solid var(--glass-border) !important;
             border-bottom: none !important;
-            /* 위쪽으로 살짝 띄워서 떠있는 느낌 */
             box-shadow: 0 -4px 32px rgba(0,0,0,0.08), 0 -1px 0 rgba(255,255,255,0.3) !important;
+            /* 모달 열릴 때 부드럽게 사라짐 */
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease !important;
         }
         .dark #bottom-nav {
             background: rgba(45, 50, 43, 0.55) !important;
             box-shadow: 0 -4px 32px rgba(0,0,0,0.3), 0 -1px 0 rgba(255,255,255,0.05) !important;
         }
+        /* 모달 열렸을 때 탭바 숨김 */
+        #bottom-nav.modal-open {
+            transform: translateY(100%) !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
 
-        /* ── 모달: 앱 하단에 고정, 탭바 위로 슬라이드업 ── */
+        /* ── 모달 ── */
         .modal-overlay { transition: opacity 0.3s ease; }
         .modal-content {
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             transform: translateY(100%);
             position: absolute;
-            bottom: 0;      /* 앱 하단에 고정 — 탭바를 시각적으로 덮으며 올라옴 */
+            bottom: 0;
             left: 0;
             width: 100%;
+            /* 탭바와 동일한 반투명 유리 — 아래부터 이어진 느낌 */
+            background: rgba(250, 249, 246, 0.82) !important;
+            backdrop-filter: blur(28px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+            border-top: 1px solid rgba(255,255,255,0.5) !important;
+            box-shadow: 0 -8px 40px rgba(0,0,0,0.1) !important;
+        }
+        .dark .modal-content {
+            background: rgba(45, 50, 43, 0.88) !important;
+            border-top: 1px solid rgba(255,255,255,0.08) !important;
+            box-shadow: 0 -8px 40px rgba(0,0,0,0.4) !important;
         }
         .modal-active .modal-content { transform: translateY(0); }
-
-        /* 명상 화면에서도 동일 (nav-hidden 분기 불필요) */
 
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; height: 6px; border-radius: 5px; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: var(--primary-color); cursor: pointer; margin-top: -7px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
